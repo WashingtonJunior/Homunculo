@@ -1,0 +1,2 @@
+http://fritzing.org/projects/esp8266-arduino-oled-spi
+http://blog.oscarliang.net/arduino-oled-display-library/

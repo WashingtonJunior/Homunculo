@@ -1,0 +1,15 @@
+C:\Users\washj\AppData\Local\Temporary Projects\JARVIS\bin\Debug\JARVIS.exe.config
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\bin\Debug\JARVIS.exe.config
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.MainForm.resources
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.Resources.resources
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.vbproj.GenerateResource.Cache
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.xml
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\bin\Debug\JARVIS.exe
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\bin\Debug\JARVIS.pdb
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\bin\Debug\JARVIS.xml
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.exe
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.pdb
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.Slider.resources
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.SliderVertical.resources
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\obj\Debug\JARVIS.vbprojResolveAssemblyReference.cache
+C:\Users\washj\Google Drive\Desenvolvimento\JARVIS\JARVIS\bin\Debug\JARVIS_mgen.exe.config

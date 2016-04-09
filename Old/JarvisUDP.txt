@@ -1,0 +1,1171 @@
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+#include <LWiFi.h>
+#include <LWiFiUdp.h>
+
+#define MAXDATA 512
+
+char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
+char pass[] = "bc25fcb38b";       // your network password
+
+unsigned int localPort = 2390;      // local port to listen for UDP packets
+unsigned int remotPort = 2391;      // local port to listen for UDP packets
+
+IPAddress remotComp = IPAddress(192, 168, 0, 125);
+
+// A UDP instance to let us send and receive packets over UDP
+LWiFiUDP Udp;
+
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+// you can also call it with a different address you want
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41);
+
+#define SERVOMIN  153 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  590 // this is the 'maximum' pulse length count (out of 4096)
+#define SR04TRIGGERPIN 12
+#define SR04ECHOPIN 11
+
+byte packetBuffer[MAXDATA]; //buffer to hold incoming and outgoing packets
+
+int lastpos[16];
+int mempos[16][16];
+int curmempos = 0;
+int servomin[16];
+int servomax[16];
+int aceleracao = 0;
+int automatic = 0;
+int idxauto = 0;
+
+char walkforward[] = "*A100;E32;G65;F110:5|~50|*F90;G90:5|~50|*C120;B70:1|~50|*A146;E80;B75:15|~50|*B90;C90:5|~50|*G60;F120:1|~50|*A126;E49:20|~50";
+char procedimento[MAXDATA][MAXDATA];
+
+void setup() {
+  Serial.begin(9600);
+
+  split(walkforward, "|", procedimento);
+    
+  pinMode(SR04TRIGGERPIN, OUTPUT);
+  pinMode(SR04ECHOPIN, INPUT);
+
+  Serial.println("16 channel Servo test!");
+  Serial.println("[A-P][0-180]:speed, OFF, ~[0-9999], ![0-15], ACC");
+  
+  pwm.begin();
+  
+  pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+
+  for (int i=0;i<16;i++)
+  {
+    lastpos[i]=-1;
+
+    for (int j=0;j<16;j++)
+    {
+      mempos[i][j] = -1;
+    }
+
+    servomin[i] = SERVOMIN;
+    servomax[i] = SERVOMAX;
+  }
+
+  servomin[0]=158;
+  servomax[0]=430;
+
+  servomin[4]=261;
+  servomax[4]=530;
+
+    // attempt to connect to Wifi network:
+  LWiFi.begin();
+  while (!LWiFi.connectWPA(ssid, pass))
+  {
+    delay(1000);
+    Serial.println("retry WiFi AP");
+  }
+  Serial.println("Connected to wifi");
+  printWifiStatus();
+
+  delay(10000);
+
+  Serial.println("\nStarting server...");
+  Udp.begin(localPort);
+
+  Serial.print("Server started on port ");
+  Serial.println(localPort);
+}
+
+void loop() {
+  char data[MAXDATA];
+  int numero;
+  int recebeu = 0;
+
+  if (automatic==1)
+  {
+    strcpy(data, procedimento[idxauto]);
+    
+    idxauto++;
+
+    if ((idxauto>=MAXDATA) || (data[0]=='\0'))
+    {
+      idxauto = 0;
+    }
+    else
+    {
+      recebeu = 1;
+    }
+  }
+
+  if (Serial.available() > 0)
+  {
+    numero = Serial.readBytesUntil (13,data,MAXDATA);
+    data[numero] = 0;
+    recebeu = 1;
+
+    Serial.println("Recebeu via Serial");
+  }
+
+  if (Udp.parsePacket())
+  {
+    memset(packetBuffer, 0, MAXDATA);
+    Udp.read(packetBuffer, MAXDATA); // read the packet into the buffer
+    for (int i = 0; i < MAXDATA; ++i)
+    {
+      char c = packetBuffer[i];
+      data[i] = c;
+    }
+    
+    recebeu = 1;
+
+    
+    Serial.println("Recebeu via UDP");
+  }
+
+  if (recebeu)
+  {
+    if (strcmp(data, "AUTO")==0)
+    {
+        Serial.println("AUTO WALK");
+        automatic = 1;
+    }
+    else
+    {
+      if (strcmp(data, "DISTANCE")==0)
+      {
+          char resp[MAXDATA];
+
+          sprintf(resp, "%i", getDistanceinCM());
+          
+          Serial.print("Distance: ");
+          Serial.print(resp);
+          Serial.println("cm");
+          sendData(resp);
+      }
+      else
+      {
+          if (strcmp(data, "AUTO")==0)
+          {
+              Serial.println("AUTO WALK");
+              automatic = 1;
+          }
+          else
+          {
+            if (data[0]=='~')
+            {
+              int tempo = getValue(data);
+              Serial.print("DELAY: ");
+              Serial.println(tempo);
+              delay(tempo);
+            }
+            else
+            {
+              if (data[0]=='!')
+              {
+                int servo = getValue(data);
+                Serial.print("OFF: ");
+                Serial.println(servo);
+                offServo(servo);
+              }
+              else
+              {
+                /*
+                if (data[0]=='%') //Teste feedback
+                {
+                  int retorno = getFeedback(A1);
+                  int angulo = map(retorno, 110, 473, 0, 180);
+      
+                  Serial.print("Angulo: ");
+                  Serial.println(angulo);
+                  
+                  moveServo(12, angulo);
+                }
+                */
+                if (data[0]=='(')
+                {
+                  int servonum = getValue(data);
+                  int minvalue = getExtraValue(data);
+                  
+                  Serial.print("Servo:");
+                  Serial.println(servonum);
+                  Serial.print("MIN:");
+                  Serial.println(minvalue);
+      
+                  servomin[servonum] = minvalue;
+                }
+                else
+                {
+                  if (data[0]==')')
+                  {
+                    int servonum = getValue(data);
+                    int maxvalue = getExtraValue(data);
+                    
+                    Serial.print("Servo:");
+                    Serial.println(servonum);
+                    Serial.print("MAX:");
+                    Serial.println(maxvalue);
+        
+                    servomax[servonum] = maxvalue;
+                  }
+                  else
+                  {
+                    if (strcmp(data, "ACC")==0)
+                    {
+                      Serial.print("ACC: ");
+                      if (aceleracao==1)
+                      {
+                        aceleracao = 0;
+                      }
+                      else
+                      {
+                        aceleracao = 1;
+                      }
+                      Serial.println(aceleracao);
+                    }
+                    else
+                    {
+                      if (data[0]=='*')
+                      {
+                        Serial.println("Desmembrando:");
+      
+                        char cmds[16][16];
+      
+                        for (int i=0;i<15;i++)
+                        {
+                          cmds[i][0] = '\0';
+                        }
+                        
+                        char* dado = strtok(data, "*;");
+      
+                        int cont = 0;
+                        
+                        while (dado!=NULL)
+                        {
+                          strcpy(cmds[cont], dado);
+      
+                          Serial.print(cont);
+                          Serial.print(" = ");
+                          Serial.println(cmds[cont]);
+                          cont++;
+                          
+                          dado = strtok(NULL, ";:");
+                        }
+                        
+                        //Serial.println(getValue(data));
+                        //Serial.println(getExtraValue(data));
+                        Serial.println("Fim!");
+                        playServos(cmds);
+                      }
+                      else
+                      {
+                        playServo(data);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+  }
+  /*
+  else
+  {
+    int retorno = getFeedback(A1);
+    int angulo = map(retorno, 104, 449, 0, 180);
+
+    Serial.print("Retorno: ");
+    Serial.println(retorno);
+
+    Serial.print("Angulo: ");
+    Serial.println(angulo);
+    
+    moveServo(12, angulo);
+  }
+  */
+}
+
+int getValue(char *data)
+{
+    char ndata[MAXDATA];
+    int j=0;
+    
+    for (int i=1;i<MAXDATA;i++)
+    {
+      if (data[i]==':')
+      {
+        ndata[j]='\0';
+        break;        
+      }
+      else
+      {
+        ndata[j]=data[i];
+      }
+      j++;
+    }
+    int nvalor = (int)ndata[0];
+    int valor = -1;
+    
+    if (nvalor>=65)
+    {
+      valor = nvalor-65;
+    }
+    else
+    {
+      valor = atoi(ndata);  
+    }
+
+    return valor;
+}
+
+int getExtraValue(char *data)
+{
+    char ndata[MAXDATA];
+    int j=0;
+    bool achou=0;
+    
+    for (int i=1;i<MAXDATA;i++)
+    {
+      if (data[i]==':')
+      {
+        j=0;
+        ndata[j]='\0';
+        achou = 1;
+      }
+      else
+      {
+        ndata[j]=data[i];
+        j++;
+        if (j<MAXDATA)
+          ndata[j]='\0';
+      }
+    }
+
+    int valor = atoi(ndata);
+
+    if (!achou)
+      valor = 0;
+      
+    return valor;
+}
+
+/*
+char* getTokens(char *data)
+{
+    char ndata[MAXDATA];
+    int j=0;
+    bool achou=0;
+    
+    for (int i=1;i<MAXDATA;i++)
+    {
+      if (data[i]==':')
+      {
+        j=0;
+        ndata[j]='\0';
+        achou = 1;
+      }
+      else
+      {
+        ndata[j]=data[i];
+        j++;
+        if (j<MAXDATA)
+          ndata[j]='\0';
+      }
+    }
+
+    int valor = atoi(ndata);
+
+    if (!achou)
+      valor = 0;
+      
+    return valor;
+}
+*/
+
+int playServo(char *data)
+{
+    int servonum = (int)data[0];
+ 
+    servonum -= 65;
+
+    int angulo = getValue(data);
+    int velocidade = getExtraValue(data);
+    
+    //int angulo = atoi(data);
+
+    Serial.print(servonum);
+    Serial.print(": ");
+    Serial.print(angulo);
+    Serial.print(" :: ");
+    Serial.println(velocidade);
+
+    moveServo(servonum, angulo, velocidade);
+}
+
+int playServos(char data[16][16])
+{
+    int servonums[16];
+    int angulos[16];
+    int velocidade = 0;
+
+    for (int i=0;i<16;i++)
+    {
+      servonums[i] = -1;
+      
+      if ((int)data[i][0]==0)
+        break;
+        
+      int pri = (int)data[i][0];
+
+      if (pri>=65)
+      {
+        servonums[i] = pri - 65;
+      }
+      else
+      {
+        velocidade = atoi(data[i]);
+        break;
+      }
+      
+      angulos[i] = getValue(data[i]);
+
+      Serial.print(i);
+      Serial.println(" <***");
+      Serial.print(servonums[i]);
+      Serial.print(": ");
+      Serial.print(angulos[i]);
+      Serial.print(" :: ");
+      Serial.println("***>");
+    }
+
+    Serial.print("Velocidade: ");
+    Serial.println(velocidade);
+
+    moveServos(servonums, angulos, velocidade);
+}
+
+int moveServo(int servonum, int pos, int velocidade)
+{
+    int pulso = -1;
+
+    if (velocidade<=0)
+      velocidade = 1;
+
+    int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
+    int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
+    int dif = pulselength-plold;
+
+    Serial.print("plold/pulselength: ");
+    Serial.print(plold);
+    Serial.print("/");
+    Serial.println(pulselength);
+
+    int incr = dif / velocidade;
+    pulso = plold;
+
+    if (velocidade>1)
+    {
+      for (int v=velocidade; v>0; v--)
+      {
+        if (aceleracao==1)
+        {
+          incr = dif / v;
+          pulso = plold + incr;
+        }
+        else
+        {
+          pulso += incr;
+        }
+        
+        Serial.print(v);
+        Serial.print("->");
+        Serial.print(pulso);
+        Serial.print(" (incr: ");
+        Serial.print(incr);
+        Serial.println(")");
+        
+        pwm.setPWM(servonum, 0, pulso);
+  
+        delay(30);
+      }
+    }
+    pwm.setPWM(servonum, 0, pulselength);
+
+    lastpos[servonum] = pos;
+    
+    return pulselength;
+}
+
+
+void moveServos(int servonums[], int poss[], int velocidade)
+{
+    int incrs[16];
+
+    for (int i=0; i<16; i++)
+    {
+      incrs[i] = 0;
+    }
+    
+    int pulso = -1;
+
+    if (velocidade<=0)
+      velocidade = 1;
+
+    if (velocidade>1)
+    {
+      for (int v=velocidade; v>0; v--)
+      {
+        for (int k=0;k<16;k++)
+        {
+          int servonum = servonums[k];
+
+          if (servonum==-1)
+            break;
+            
+          int pos = poss[k];
+        
+          int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
+          int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
+          int dif = pulselength-plold;
+
+          Serial.print(k);
+          Serial.println(" ***");
+          Serial.print("  plold/pulselength: ");
+          Serial.print(plold);
+          Serial.print("  /");
+          Serial.println(pulselength);
+
+          int incr;
+          
+          if (incrs[k]==0)
+          {
+            incr = dif / velocidade;
+            incrs[k] = incr;
+          }
+          else
+          {
+            incr = incrs[k];
+          }
+          
+          pulso = plold;
+
+          if (aceleracao==1)
+          {
+            incr = dif / v;
+            pulso = plold + incr;
+          }
+          else
+          {
+            pulso += incr;
+          }
+        
+          Serial.print(v);
+          Serial.print("->");
+          Serial.print(pulso);
+          Serial.print(" (incr: ");
+          Serial.print(incr);
+          Serial.print(")");
+        
+          pwm.setPWM(servonum, 0, pulso);
+
+          int npos = map(pulso, servomin[servonum], servomax[servonum], 0, 180);
+
+          lastpos[servonum] = npos;
+
+          Serial.print("[");
+          Serial.print(npos);
+          Serial.print(" graus]");
+        }
+        delay(30);
+      }
+    }
+
+    for (int k=0;k<16;k++)
+    {
+      int servonum = servonums[k];
+      if (servonum==-1)
+        break;
+        
+      int pos = poss[k];
+      int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
+
+      Serial.print("Final ");
+      Serial.print(servonum);
+      Serial.print(": ");
+      Serial.println(pulselength);
+      
+      pwm.setPWM(servonum, 0, pulselength);
+
+      lastpos[servonum] = pos;
+    }
+}
+
+int offServo(int servonum)
+{
+    pwm.setPWM(servonum, 0, 0);
+
+    lastpos[servonum] = -1;
+
+    return 0;
+}
+
+void printWifiStatus()
+{
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(LWiFi.SSID());
+
+  // print your LWiFi shield's IP address:
+  IPAddress ip = LWiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+
+  // print the received signal strength:
+  long rssi = LWiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
+}
+
+int getFeedback(int pino)
+{
+    int mean;
+    int result;
+    int test;
+    boolean done;
+    int reading[20];
+     
+    for (int j=0; j<20; j++){
+      reading[j] = analogRead(pino);    //get raw data from servo potentiometer
+      delay(3);
+    }                                // sort the readings low to high in array                                
+    done = false;              // clear sorting flag             
+    while(done != true){       // simple swap sort, sorts numbers from lowest to highest
+    done = true;
+    for (int j=0; j<20; j++){
+      if (reading[j] > reading[j + 1]){     // sorting numbers here
+        test = reading[j + 1];
+        reading [j+1] = reading[j] ;
+        reading[j] = test;
+        done = false;
+       }
+     }
+   }
+    mean = 0;
+    for (int k=6; k<14; k++){        //discard the 6 highest and 6 lowest readings
+      mean += reading[k];
+    }
+    result = mean/8;                  //average useful readings
+    return(result);
+}
+
+void split(char* data, char* separador, char retorno[MAXDATA][MAXDATA])
+{
+    char* dado = strtok(data, separador);
+
+    int cont = 0;
+                  
+    while (dado!=NULL)
+    {
+      strcpy(retorno[cont], dado);
+
+      Serial.print(cont);
+      Serial.print(" = ");
+      Serial.println(retorno[cont]);
+      cont++;
+      
+      dado = strtok(NULL, separador);
+    }
+}
+
+int getDistanceinCM()
+{
+    long duration, distance;
+    digitalWrite(SR04TRIGGERPIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(SR04TRIGGERPIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(SR04TRIGGERPIN, LOW);
+    duration = pulseIn(SR04ECHOPIN, HIGH);
+    distance = (duration/2) / 29.1;
+
+    if (distance >= 200 || distance <= 0)
+    {
+      distance = -1;
+    }
+  
+    return distance;
+}
+
+int sendData(char data[MAXDATA])
+{
+  Serial.print("Enviando '");
+  Serial.print(data);
+  Serial.print("' para '");
+  Serial.print(Udp.remoteIP());
+  Serial.print("':");
+  Serial.println(Udp.remotePort());
+  
+  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+
+  for (int i=0; i++; i<MAXDATA)
+  {
+    char c = data[i];
+    Udp.write(c);
+
+    if (c=='\0')
+      break;
+  }
+
+  int ret = Udp.endPacket();
+
+  Serial.print("Retorno: ");
+  Serial.println(ret);
+}
+
+
+
+
+------------------------------------------------------------
+Public Class MainForm
+    Dim serial As System.IO.Ports.SerialPort = Nothing
+    Dim pausaEntreEnvios As Integer = 50
+    Dim udp As System.Net.Sockets.UdpClient = Nothing
+
+    Private Sub MainForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        'serial.Close()
+    End Sub
+
+    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        CarregarMovimentos()
+
+        'Enviar("Inicializado!")
+
+        'serial = New IO.Ports.SerialPort("COM5", 9600)
+
+        'serial.Open()
+    End Sub
+
+    Public Sub Enviar(ByVal dados As String)
+        If dados.ToLower().Contains(".seq") Then
+            Dim posições() As String = CarregarPosições(dados)
+
+            For Each pos As String In posições
+                Enviar(pos)
+            Next
+        Else
+            EnviarDados(dados)
+
+            Threading.Thread.Sleep(pausaEntreEnvios)
+
+            If Not (dados.StartsWith("(") Or dados.StartsWith(")")) AndAlso dados.Contains(":") Then
+                Dim stempo As String = dados.Substring(dados.IndexOf(":") + 1)
+                'Stop
+                Dim pausa As Integer = 30 * Integer.Parse(stempo)
+                Threading.Thread.Sleep(pausa)
+
+            End If
+            If dados.StartsWith("~") Then
+                Dim stempo As String = dados.Replace("~", "")
+
+                Dim pausa As Integer = Integer.Parse(stempo) + pausaEntreEnvios
+
+                Threading.Thread.Sleep(pausa)
+            End If
+        End If
+    End Sub
+
+    Public Function EnviarDados(ByVal dados As String) As Boolean
+        Dim retorno As Boolean = False
+
+        If udp IsNot Nothing Then
+            udp.Connect(txtEndereço.Text, Integer.Parse(txtPorta.Text))
+
+            Dim bytes() As Byte = System.Text.ASCIIEncoding.ASCII.GetBytes(dados)
+
+            udp.Send(bytes, bytes.Length)
+            retorno = True
+        End If
+
+        Return retorno
+    End Function
+
+    Public Function ReceberDados() As String
+        'Dim udp As New System.Net.Sockets.UdpClient(2391)
+        'Dim origem As New Net.IPEndPoint(Net.IPAddress.Any, 2390)
+
+        'Dim bytes() As Byte = udp.Receive(udp.Client.LocalEndPoint)
+        Stop
+        'Dim origem As New Net.IPEndPoint(udp.Client.LocalEndPoint)
+        Dim t As New Threading.Thread(AddressOf ReceberAsync)
+
+        t.Start()
+        EnviarDados("DISTANCE")
+        Stop
+        'udp.BeginReceive(AddressOf Me.ReceberAsync, )
+        'Dim origem As New Net.IPEndPoint(Net.IPAddress.Any, 65399)
+
+        Stop
+
+    End Function
+
+    Public Sub ReceberAsync()
+        Dim origem As Net.IPEndPoint = udp.Client.LocalEndPoint
+
+        Dim bytes() As Byte = udp.Receive(origem)
+
+        Debug.Print("Recebeu!")
+    End Sub
+    'Private Sub Ângulo_Scroll(sender As Object, e As EventArgs)
+    '    serial.Write("K" & Ângulo.Value)
+    '    Ângulo.CreateGraphics().DrawString(Ângulo.Value.ToString(), New Font("Verdana", 10), New SolidBrush(Color.Black), 0, 0)
+    'End Sub
+
+    Private Sub btnOff_Click(sender As Object, e As EventArgs) Handles btnOff.Click
+        Enviar("OFF")
+    End Sub
+
+    Private Sub Servo_Scroll(sender As Object, e As EventArgs) Handles Servo1.Scroll, Servo2.Scroll, Servo3.Scroll, Servo5.Scroll, Servo6.Scroll, Servo7.Scroll, Servo11.Scroll, Servo12.Scroll, Servo13.Scroll, Servo14.Scroll, Servo15.Scroll, Servo16.Scroll, SliderTeste.Scroll
+        'If serial IsNot Nothing AndAlso serial.IsOpen() Then
+        'Stop
+        Dim cmd As String = sender.ServoID & sender.Value.ToString()
+        Debug.Print(cmd)
+
+        'serial.Write(cmd)
+        If chkAtivar.Checked Then
+            Enviar(cmd)
+        End If
+
+        If sender.Selected = CheckState.Indeterminate Then
+            For Each ctrl As Control In Me.Controls
+                If TypeOf ctrl Is Slider Then
+                    Dim sl As Slider = ctrl
+
+                    If sl.Name <> sender.Name Then
+                        If sl.Selected = CheckState.Checked OrElse sl.Selected = CheckState.Unchecked Then
+                            'Dim dif As Integer = IIf(sl.Selected = CheckState.Checked, sender.Value - sender.PreviousValue, sender.PreviousValue - sender.Value)
+                            Dim dif As Integer = 0
+
+                            If sl.Selected = CheckState.Unchecked Then
+                                dif = 180 - sender.Value
+                            Else
+                                dif = sl.Value + sender.Value - sender.PreviousValue
+
+                                If dif = 0 OrElse dif = 180 Then
+                                    sl.Value = sender.PreviousValue
+                                End If
+                            End If
+
+                            'Debug.Print("Dif: " & dif.ToString())
+                            'sl.Value += dif
+                            sl.Value = dif
+                        End If
+                    End If
+                End If
+            Next
+        End If
+        'End If
+    End Sub
+
+    Private Sub Servo_ButtonClick(sender As Object, e As EventArgs) Handles Servo1.ButtonClick, Servo2.ButtonClick, Servo3.ButtonClick, Servo5.ButtonClick, Servo6.ButtonClick, Servo7.ButtonClick, Servo11.ButtonClick, Servo12.ButtonClick, Servo13.ButtonClick, Servo14.ButtonClick, Servo15.ButtonClick, Servo16.ButtonClick, SliderTeste.ButtonClick
+        lbPosições.Items.Add(sender.ServoID & sender.Value.ToString())
+    End Sub
+
+    Private Sub btnRegistrar_Click(sender As Object, e As EventArgs) Handles btnRegistrar.Click
+        For Each ctrl As Control In Me.Controls
+            If TypeOf ctrl Is Slider Then
+                Dim sl As Slider = ctrl
+
+                lbPosições.Items.Add(sl.ServoID & sl.Value)
+                'lbPosições.Items.Add("WAIT300")
+            End If
+        Next
+    End Sub
+
+    Private Sub btnLimpar_Click(sender As Object, e As EventArgs) Handles btnLimpar.Click
+        lbPosições.Items.Clear()
+    End Sub
+
+    Private Sub btnGravar_Click(sender As Object, e As EventArgs) Handles btnGravar.Click
+        Dim nome As String = InputBox("Digite o nome do movimento:")
+        Dim arq As String = IO.Path.Combine(Application.StartupPath, nome & ".seq")
+
+        Dim sw As New IO.StreamWriter(arq)
+
+        For Each pos As String In lbPosições.Items
+            sw.WriteLine(pos)
+        Next
+        sw.Close()
+
+        CarregarMovimentos()
+    End Sub
+
+    Public Sub CarregarMovimentos()
+        lbMovimentos.Items.Clear()
+
+        Dim arqs() As String = IO.Directory.GetFiles(Application.StartupPath, "*.seq")
+
+        For Each arq As String In arqs
+            lbMovimentos.Items.Add(IO.Path.GetFileName(arq))
+        Next
+    End Sub
+
+    Private Sub btnExecutar_Click(sender As Object, e As EventArgs) Handles btnExecutar.Click
+        If lbMovimentos.SelectedIndex >= 0 Then
+            Dim nome As String = lbMovimentos.SelectedItem
+            Dim linhas() As String = CarregarPosições(nome)
+
+            For Each linha As String In linhas
+                Enviar(linha)
+            Next
+        End If
+    End Sub
+
+    Private Sub btnPausa_Click(sender As Object, e As EventArgs) Handles btnPausa.Click
+        Dim valor As String = InputBox("Digite a pausa em milissegundos (de 1 até 9999):", "Inserir Pausa", "300")
+
+        If Not String.IsNullOrEmpty(valor) Then
+            lbPosições.Items.Add("~" & valor)
+        End If
+    End Sub
+
+    Public Function CarregarPosições(ByVal nome As String) As String()
+        Dim arq As String = IO.Path.Combine(Application.StartupPath, nome)
+
+        Dim sr As New IO.StreamReader(arq)
+        Dim chunk As String = sr.ReadToEnd()
+        sr.Close()
+
+        Dim linhas() As String = chunk.Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
+
+        Return linhas
+    End Function
+
+    Private Sub btnAbrir_Click(sender As Object, e As EventArgs) Handles btnAbrir.Click
+        If lbMovimentos.SelectedIndex >= 0 Then
+            Dim nome As String = lbMovimentos.SelectedItem
+            Dim linhas() As String = CarregarPosições(nome)
+
+            lbPosições.Items.Clear()
+
+            For Each pos As String In linhas
+                lbPosições.Items.Add(pos)
+            Next
+        End If
+
+        CarregarMovimentos()
+    End Sub
+
+    Private Sub lbPosições_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbPosições.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub lbPosições_KeyDown(sender As Object, e As KeyEventArgs) Handles lbPosições.KeyDown
+        If e.KeyCode = Keys.Delete Then
+            If lbPosições.SelectedIndex >= 0 Then
+                lbPosições.Items.RemoveAt(lbPosições.SelectedIndex)
+            End If
+        ElseIf e.KeyCode = Keys.F5
+            btnExecutarPosições.PerformClick()
+        ElseIf e.KeyCode = Keys.F8
+            Dim idx As Integer = lbPosições.SelectedIndex
+            Dim pos As String = lbPosições.Items(idx)
+
+            Enviar(pos)
+
+            lbPosições.ClearSelected()
+            If (idx + 1) < lbPosições.Items.Count Then
+                lbPosições.SelectedIndex = idx + 1
+            Else
+                lbPosições.SelectedIndex = 0
+            End If
+        End If
+    End Sub
+
+    Private Sub btnParaCima_Click(sender As Object, e As EventArgs) Handles btnParaCima.Click
+        If lbPosições.SelectedIndex > 0 Then
+            Dim idx As Integer = lbPosições.SelectedIndex
+
+            Dim antes As String = lbPosições.Items(idx - 1)
+            Dim atual As String = lbPosições.Items(idx)
+
+            lbPosições.Items(idx - 1) = atual
+            lbPosições.Items(idx) = antes
+
+            lbPosições.SelectedIndex = idx - 1
+        End If
+    End Sub
+
+    Private Sub btnParaBaixo_Click(sender As Object, e As EventArgs) Handles btnParaBaixo.Click
+        If lbPosições.SelectedIndex < lbPosições.Items.Count - 1 Then
+            Dim idx As Integer = lbPosições.SelectedIndex
+
+            Dim próximo As String = lbPosições.Items(idx + 1)
+            Dim atual As String = lbPosições.Items(idx)
+
+            lbPosições.Items(idx + 1) = atual
+            lbPosições.Items(idx) = próximo
+
+            lbPosições.SelectedIndex = idx + 1
+        End If
+
+    End Sub
+
+    Private Sub btnExecutarPosições_Click(sender As Object, e As EventArgs) Handles btnExecutarPosições.Click
+        Dim qt As Integer = 1
+
+        If Not Integer.TryParse(txtQtExecutar.Text, qt) Then
+            qt = 1
+        End If
+
+        If lbPosições.SelectedIndices.Count = 1 Then
+            For k As Integer = 1 To qt
+                lbPosições.Focus()
+                For i As Integer = 0 To lbPosições.Items.Count - 1
+                    lbPosições.ClearSelected()
+                    lbPosições.SelectedIndex = i
+                    Application.DoEvents()
+
+                    Dim pos As String = lbPosições.SelectedItem
+
+                    Enviar(pos)
+                Next
+            Next
+        Else
+            For Each idx As Integer In lbPosições.SelectedIndices
+                Dim pos As String = lbPosições.Items(idx)
+
+                Enviar(pos)
+            Next
+        End If
+    End Sub
+
+    Private Sub btnDesligar_Click(sender As Object, e As EventArgs) Handles btnDesligar.Click
+        Dim valor As String = InputBox("Digite o número do servo-motor:", "Inserir Desligamento", "")
+
+        If Not String.IsNullOrEmpty(valor) Then
+            lbPosições.Items.Add("!" & valor)
+        End If
+
+    End Sub
+
+    Private Sub lbPosições_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles lbPosições.MouseDoubleClick
+        Dim novovalor As String = InputBox("Digite o novo valor:", "Alterar", lbPosições.SelectedItem)
+
+        If Not String.IsNullOrEmpty(novovalor) Then
+            lbPosições.Items(lbPosições.SelectedIndex) = novovalor
+        End If
+    End Sub
+
+    Private Sub btnMovParaSliders_Click(sender As Object, e As EventArgs) Handles btnMovParaSliders.Click
+        If lbMovimentos.SelectedIndex >= 0 Then
+            Dim nomearq As String = lbMovimentos.SelectedItem
+
+            Dim arq As String = IO.Path.Combine(Application.StartupPath, nomearq)
+
+            Dim sr As New IO.StreamReader(arq)
+            Dim chunk As String = sr.ReadToEnd()
+            sr.Close()
+
+            Dim linhas() As String = chunk.Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
+
+            For Each linha As String In linhas
+                For Each ctrl As Control In Me.Controls
+                    If TypeOf ctrl Is Slider Then
+                        Dim sl As Slider = ctrl
+
+                        If sl.ServoID = linha(0) Then
+                            sl.Value = Integer.Parse(linha.Substring(1))
+                        End If
+                    End If
+                Next
+            Next
+        End If
+
+    End Sub
+
+    Private Sub btnReferenciar_Click(sender As Object, e As EventArgs) Handles btnReferenciar.Click
+        If lbMovimentos.SelectedIndex >= 0 Then
+            Dim nome As String = lbMovimentos.SelectedItem
+
+            lbPosições.Items.Add(nome)
+        End If
+    End Sub
+
+    Private Sub Servo_PulseChanged(sender As Object, e As EventArgs) Handles Servo1.PulseChanged, Servo2.PulseChanged, Servo3.PulseChanged, Servo5.PulseChanged, Servo6.PulseChanged, Servo7.PulseChanged, Servo11.PulseChanged, Servo12.PulseChanged, Servo13.PulseChanged, Servo14.PulseChanged, Servo15.PulseChanged, Servo16.PulseChanged, SliderTeste.PulseChanged
+        Dim sl As ISlider = sender
+        Dim cmd1 As String = "(" & sl.ServoID & ":" & sl.MinPulse.ToString()
+        Dim cmd2 As String = ")" & sl.ServoID & ":" & sl.MaxPulse.ToString()
+        'Stop
+
+        Enviar(cmd1)
+
+        Enviar(cmd2)
+    End Sub
+
+    Private Sub btnInicializar_Click(sender As Object, e As EventArgs) Handles btnInicializar.Click
+        udp = New System.Net.Sockets.UdpClient(txtEndereço.Text, Integer.Parse(txtPorta.Text))
+
+        For Each c As Control In Me.Controls
+            If TypeOf c Is ISlider Then
+                Dim sl As ISlider = c
+
+                sl.MinPulse = 153
+                sl.MaxPulse = 590
+            End If
+        Next
+
+        Servo1.MinPulse = 158
+        Servo1.MaxPulse = 430
+
+        'Servo3.MinPulse = 153
+        'Servo3.MaxPulse = 630
+
+        'Servo4.MinPulse = 157
+        'Servo4.MaxPulse = 590
+
+        Servo5.MinPulse = 261
+        Servo5.MaxPulse = 530
+
+        'Servo7.MinPulse = 142
+        'Servo7.MaxPulse = 578
+
+        'Servo8.MinPulse = 162
+        'Servo8.MaxPulse = 522
+
+        'Servo9.MinPulse = 150
+        'Servo9.MaxPulse = 590
+
+        'Servo10.MinPulse = 147
+        'Servo10.MaxPulse = 583
+    End Sub
+
+    Private Sub Servo5_Load(sender As Object, e As EventArgs) Handles Servo5.Load
+
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        ReceberDados()
+    End Sub
+End Class
+
+
+

@@ -1,0 +1,13 @@
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\bin\Release\JARVIS_mgen.exe.config
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\bin\Release\JARVIS_mgen.exe
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\bin\Release\JARVIS_mgen.pdb
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\bin\Release\JARVIS_mgen.xml
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.vbprojResolveAssemblyReference.cache
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.MainForm.resources
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.Resources.resources
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.Slider.resources
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.SliderVertical.resources
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.vbproj.GenerateResource.Cache
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.exe
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.xml
+C:\Users\washj\Google Drive\ProjectJARVIS\JARVIS_mgen\obj\Release\JARVIS_mgen.pdb
