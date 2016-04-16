@@ -64,6 +64,7 @@ Partial Class MainForm
         Me.Servo2 = New JARVIS_mgen.SliderVertical()
         Me.Servo1 = New JARVIS_mgen.Slider()
         Me.txtPausaEntreEnvios = New System.Windows.Forms.TextBox()
+        Me.btnConvertHexToBinary = New System.Windows.Forms.Button()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbHead, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -583,11 +584,21 @@ Partial Class MainForm
         Me.txtPausaEntreEnvios.TabIndex = 46
         Me.txtPausaEntreEnvios.Text = "100"
         '
+        'btnConvertHexToBinary
+        '
+        Me.btnConvertHexToBinary.Location = New System.Drawing.Point(1003, 510)
+        Me.btnConvertHexToBinary.Name = "btnConvertHexToBinary"
+        Me.btnConvertHexToBinary.Size = New System.Drawing.Size(252, 48)
+        Me.btnConvertHexToBinary.TabIndex = 47
+        Me.btnConvertHexToBinary.Text = "Converter arquivo do LCD Assistant"
+        Me.btnConvertHexToBinary.UseVisualStyleBackColor = True
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1268, 731)
+        Me.Controls.Add(Me.btnConvertHexToBinary)
         Me.Controls.Add(Me.txtPausaEntreEnvios)
         Me.Controls.Add(Me.pbHead)
         Me.Controls.Add(Me.Button2)
@@ -681,4 +692,5 @@ Partial Class MainForm
     Friend WithEvents Button2 As Button
     Friend WithEvents pbHead As PictureBox
     Friend WithEvents txtPausaEntreEnvios As TextBox
+    Friend WithEvents btnConvertHexToBinary As Button
 End Class

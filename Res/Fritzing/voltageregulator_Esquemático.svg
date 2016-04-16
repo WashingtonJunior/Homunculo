@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created with Fritzing (http://www.fritzing.org/) -->
+<svg xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' version='1.2' baseProfile='tiny' x='0in' y='0in' width='0.609722in' height='0.412861in' viewBox='0 0 43.9 29.726' >
+<g partID='1060810'><g id="schematic">
+<rect stroke="none" x="7.55001" width="28.8001" y="0.575998" class="interior rect" height="21.5999" stroke-width="0" fill="#ffffff"/>
+<text font-family="'Droid Sans'" stroke="none" x="21.95" y="9.10925" class="text" stroke-width="0" fill="#000000" text-anchor="middle" font-size="4.25002" id="label">78XX</text>
+<line y1="22.1759" y2="22.1759" x1="7.55001" stroke="#000000" x2="36.3502" class="other" stroke-width="0.900002" stroke-linecap="round"/>
+<line y1="22.1759" y2="0.575998" x1="36.3502" stroke="#000000" x2="36.3502" class="other" stroke-width="0.900002" stroke-linecap="round"/>
+<line y1="0.575998" y2="0.575998" x1="36.3502" stroke="#000000" x2="7.55001" class="other" stroke-width="0.900002" stroke-linecap="round"/>
+<line y1="0.575998" y2="22.1759" x1="7.55001" stroke="#000000" x2="7.55001" class="other" stroke-width="0.900002" stroke-linecap="round"/>
+<line y1="7.77598" y2="7.77598" x1="0.35" stroke="#787878" x2="7.55001" class="pin" stroke-width="0.7" connectorname="IN" id="connector1pin" stroke-linecap="round"/>
+<g stroke="none" x="0.35" width="0.000283465" y="7.77598" class="terminal" height="0.000283464" stroke-width="0" fill="none" id="connector1terminal"/>
+<text font-family="'Droid Sans'" stroke="none" x="3.95" y="6.72597" class="text" stroke-width="0" fill="#8c8c8c" text-anchor="middle" font-size="2.50001">2</text>
+<text font-family="'Droid Sans'" stroke="none" x="9.65001" y="8.47596" class="text" stroke-width="0" fill="#787878" text-anchor="start" font-size="3.5">IN</text>
+<line y1="29.3759" y2="22.1759" x1="21.95" stroke="#787878" x2="21.95" class="pin" stroke-width="0.7" connectorname="GND" id="connector0pin" stroke-linecap="round"/>
+<g stroke="none" x="21.95" width="0.000283465" y="29.3759" class="terminal" height="0.000283464" stroke-width="0" fill="none" id="connector0terminal"/>
+<g transform="matrix(1, 0, 0, 1, 20.9001, 25.7759)">
+<g>
+<g transform="rotate(270)">
+<g>
+<text font-family="'Droid Sans'" stroke="none" x="0" y="0" class="text" stroke-width="0" fill="#8c8c8c" text-anchor="middle" font-size="2.50001">1</text>
+</g>
+</g>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 22.6501, 20.076)">
+<g>
+<g transform="rotate(270)">
+<g>
+<text font-family="'Droid Sans'" stroke="none" x="0" y="0" class="text" stroke-width="0" fill="#787878" text-anchor="start" font-size="3.5">GND</text>
+</g>
+</g>
+</g>
+</g>
+<line y1="7.77598" y2="7.77598" x1="43.5502" stroke="#787878" x2="36.3502" class="pin" stroke-width="0.7" connectorname="OUT" id="connector2pin" stroke-linecap="round"/>
+<g stroke="none" x="43.5502" width="0.000283465" y="7.77598" class="terminal" height="0.000283464" stroke-width="0" fill="none" id="connector2terminal"/>
+<text font-family="'Droid Sans'" stroke="none" x="39.9502" y="6.72597" class="text" stroke-width="0" fill="#8c8c8c" text-anchor="middle" font-size="2.50001">3</text>
+<text font-family="'Droid Sans'" stroke="none" x="34.25" y="8.47596" class="text" stroke-width="0" fill="#787878" text-anchor="end" font-size="3.5">OUT</text>
+</g>
+</g></svg>

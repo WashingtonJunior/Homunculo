@@ -770,4 +770,43 @@ Public Class MainForm
     Private Sub pbHead_Click(sender As Object, e As EventArgs) Handles pbHead.Click
 
     End Sub
+
+    Private Sub btnConvertHexToBinary_Click(sender As Object, e As EventArgs) Handles btnConvertHexToBinary.Click
+        Dim o As New OpenFileDialog()
+
+        o.DefaultExt = ".txt"
+        o.Filter = "Text file|*.txt"
+
+        If o.ShowDialog() = DialogResult.OK Then
+            Dim f As New IO.StreamReader(o.FileName)
+            Dim chunk As String = f.ReadToEnd()
+
+            f.Close()
+
+            'Stop
+            Dim ini As Integer = chunk.IndexOf("{") + 1
+            Dim fim As Integer = chunk.IndexOf("}")
+            Dim vetor() As String = chunk.Substring(ini, fim - ini).Replace(vbCrLf, "").Replace(" ", "").Replace("0x", "").Split(",")
+            'Stop
+
+            Dim Lbuffer As New List(Of Char)()
+
+            For Each b As String In vetor
+                Dim i As Byte = Byte.Parse(b, Globalization.NumberStyles.HexNumber)
+
+                If i <> 0 Then
+                    'Stop
+                End If
+
+                Lbuffer.Add(Chr(i))
+            Next
+
+            Dim arqname As String = o.FileName.Replace(".txt", ".img")
+            Dim arq As New IO.StreamWriter(arqname, False, System.Text.Encoding.GetEncoding(1252))
+            arq.Write(Lbuffer.ToArray())
+            arq.Close()
+
+            MessageBox.Show("'" & arqname & "' gravado!")
+        End If
+    End Sub
 End Class

@@ -10,7 +10,7 @@
 #include <LStorage.h>
 #include <OzOLED.h>
 #include <LAudio.h>
-
+#include <LBattery.h>
 
 #define Drv LFlash          // use Internal 10M Flash
 //#define Drv LSD           // use SD card
@@ -87,7 +87,7 @@ static unsigned char Logo[] = {
 	0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07, 0x07, 0x03, 0x03, 0x03, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-*/
+
 
 static unsigned char Logo[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -155,6 +155,9 @@ static unsigned char Logo[] = {
 	0x70, 0x70, 0x38, 0x38, 0x38, 0x38, 0x3E, 0x3E, 0x1E, 0x1E, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x07,
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
+*/
+
+unsigned char img[1024];
 
 char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
 char pass[] = "bc25fcb38b";    // your network password
@@ -201,13 +204,24 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(115200);
 
+  Serial.print("Initializing SDcard...");
+  pinMode(10, OUTPUT); // CS pin for sdcard/storage
+  Serial.println(Drv.begin());
+  Serial.println("initialization done.");
+  //LFile root = Drv.open("/jarvis");
+  //printDirectory(root, 0);
+  //Serial.println("done!");
+
+  //readSeqFile("/jarvis/inicial.seq");
+
   // Head Init
   OzOled.init();  //initialze Oscar OLED display
   delay(50);
+
+  readImgFile("/blink.img");
+
   // Head display
-  OzOled.clearDisplay();               // clear the screen and set start position to top left corner
-  OzOled.drawBitmap(Logo, 0, 0, 16, 8);
-  OzOled.setCursorXY(2, 0);
+  //OzOled.setCursorXY(2, 0);
   //OzOled.printString("CHIMICHANGAS");
   //  OzOled.setCursorXY(4, 1);
   //  OzOled.printString("DEADPOOL");
@@ -219,10 +233,12 @@ void setup() {
   OzOled.printString("    R2D2    ");
   LAudio.playFile(storageFlash, (char*)"r2d2.mp3");
   delay(3000);
+  readImgFile("/baymax.img");
   OzOled.setCursorXY(2, 0);
   OzOled.printString("   BAYMAX   ");
   LAudio.playFile(storageFlash, (char*)"baymax.mp3");
   delay(3500);
+  readImgFile("/deadpool.img");
   OzOled.setCursorXY(2, 0);
   OzOled.printString("   WALL-e   ");
   LAudio.playFile(storageFlash, (char*)"walle.mp3");
@@ -237,7 +253,11 @@ void setup() {
   //LAudio.resume();
   //delay(2000);
 
-  OzOled.setCursorXY(2, 0);
+  readImgFile("/bvs.img");
+
+  showBattery();
+
+  OzOled.setCursorXY(4, 0);
   OzOled.printString("J.A.R.V.I.S.");
 
   // 
@@ -256,16 +276,6 @@ void setup() {
   Serial.println("J.A.R.V.I.S. Loaded!");
   Serial.println("[A-P][0-180]:speed, OFF, ~[0-9999], ![0-15], ACC, BT");
   
-  Serial.print("Initializing SDcard...");
-  pinMode(10, OUTPUT); // CS pin for sdcard/storage
-  Serial.println(Drv.begin());
-  Serial.println("initialization done.");
-  //LFile root = Drv.open("/jarvis");
-  //printDirectory(root, 0);
-  //Serial.println("done!");
-
-  //readSeqFile("/jarvis/inicial.seq");
-
   pwm.begin();
   
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
@@ -685,95 +695,6 @@ void loop() {
 				Serial.print(content[i]);
 				Serial.println("'");
 			}
-			*/
-		}
-		else if (recebido[0] == '#')
-		{
-			isBusy = 1;
-			int valor = getValue(recebido);
-			int npos = getExtraValue(recebido);
-
-			if (valor == -1)
-			{
-				Serial.println("begin");
-				Serial1.write("-1");
-				Serial1.write(13);
-			}
-			else if (valor == -2)
-			{
-				for (int ii = 0; ii < MAXDATA*2; ii++)
-				{
-					Serial.print("Enviando ");
-					Serial.println(ii);
-
-					char resp[3];
-
-					resp[0] = '\0';
-					resp[1] = '\0';
-					resp[2] = '\0';
-
-					int qt = sprintf(resp, "%i", image[ii]);
-
-					//Serial.print("qt");
-					//Serial.print(" = ");
-					//Serial.println(qt);
-				  
-					for (int j = 0; j < qt; j++)
-					{
-						Serial1.write(resp[j]);
-						//Serial.print(j);
-						//Serial.print(" == ");
-						//Serial.print(resp[j]);
-						delay(50);
-					}
-					Serial1.write(13);
-					//Serial1.write(13);
-					//Serial.println("[ENTER]");
-					delay(100);
-				}
-				Serial1.write("-2");
-				Serial1.write(13);
-
-				Serial.println("end");
-			}
-			else
-			{
-				image[npos] = valor;
-				Serial.print(npos);
-				Serial.print(" -> ");
-				Serial.println(valor);
-			}
-			//int y = getExtraValue(recebido);
-		  
-		//for (int i = 1; i < 4; i++)
-		//{
-		//	Serial1.write(recebido[i]);
-		//}
-		//Serial1.write(13);
-		//delay(50);
-
-			//Serial1.write(y);
-			//Serial1.write(200);
-
-			//Serial.print("'");
-			//Serial.print(recebido);
-			//Serial.print(", ");
-			//Serial.print(y);
-			//Serial.println("'");
-
-			/*
-			Serial.print("'");
-			Serial.print((int)recebido[1]);
-			Serial.print(", ");
-			Serial.print((int)recebido[2]);
-			Serial.print(", ");
-			Serial.print((int)recebido[3]);
-			Serial.println("'");
-
-			Serial1.print(recebido[1]);
-			Serial1.print(recebido[2]);
-			Serial1.print(recebido[3]);
-			delay(50);
 			*/
 		}
 		else if (recebido[0]=='!')
@@ -1278,6 +1199,24 @@ void printWifiStatus()
   Serial.print("IP Address: ");
   Serial.println(ip);
 
+  OzOled.setCursorXY(0, 1);
+  OzOled.printNumber((long)(ip[0]));
+  OzOled.printString(".");
+  OzOled.printNumber((long)(ip[1]));
+  OzOled.printString(".");
+  OzOled.printNumber((long)(ip[2]));
+  OzOled.printString(".");
+  OzOled.printNumber((long)(ip[3]));
+
+//  OzOled.setCursorXY(0, 1);
+//  OzOled.print(ip);
+
+//  char sIP[16];
+
+//  sprintf(sIP, "%s", (Print&)ip);
+//  Serial.print("sIP: ");
+//  Serial.println(sIP);
+
   //OzOled.setCursorXY(2, 0);
   //OzOled.printString(ip);
 
@@ -1702,4 +1641,59 @@ int readSeqFileX(char *arq, char retorno[MAXDATA])
 }
 
 
+int readImgFile(char *arq)
+{
+	LFile myFile;
+	int idx = 0;
 
+	myFile = Drv.open(arq);
+	if (myFile)
+	{
+		myFile.seek(0);
+		// read from the file until there's nothing else in it:
+		while (myFile.available()) {
+			unsigned char c = myFile.read();
+
+			img[idx] = c;
+			idx++;
+		}
+		// close the file:
+		myFile.close();
+	}
+	else
+	{
+		// if the file didn't open, print an error:
+		Serial.print("error opening ");
+		Serial.println(arq);
+	}
+
+	showImg();
+	showBattery();
+
+	return idx;
+}
+
+void showImg()
+{
+	//OzOled.clearDisplay();
+	OzOled.drawBitmap(img, 0, 0, 16, 8);
+}
+
+void showBattery()
+{
+	long int batteryLevel = LBattery.level();
+	bool batteryCharging = LBattery.isCharging() == 1;
+
+	OzOled.setCursorXY(11, 1);
+	OzOled.printNumber(batteryLevel);
+	OzOled.printString("%");
+
+	if (batteryCharging)
+	{
+		OzOled.printString("C");
+	}
+	else
+	{
+		OzOled.printString(" ");
+	}
+}

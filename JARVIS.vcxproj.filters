@@ -24,5 +24,8 @@
     <ClInclude Include="__vm\.ProjectJARVIS.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="__vm\.Homunculo.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
