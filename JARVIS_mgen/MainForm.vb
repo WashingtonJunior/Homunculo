@@ -80,7 +80,11 @@ Public Class MainForm
             If dados.StartsWith("~") Then
                 Dim stempo As String = dados.Replace("~", "")
 
-                Dim pausa As Integer = Integer.Parse(stempo) + pausaEntreEnvios
+                Dim pausa As Integer = pausaEntreEnvios
+
+                If Integer.TryParse(stempo, pausa) Then
+                    pausa += pausaEntreEnvios
+                End If
 
                 Threading.Thread.Sleep(pausa)
             End If

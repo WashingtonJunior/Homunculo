@@ -20,6 +20,7 @@
 #define OzOLED_data_H
 
 #include <Arduino.h>
+#include <Printable.h>
 
 #define OzOLED_Max_X					128	//128 Pixels
 #define OzOLED_Max_Y					64	//64  Pixels
@@ -73,6 +74,7 @@ public:
 	void sendCommand(byte command);
 	void sendData(byte Data);
 
+//	void print(Printable& P, byte X=255, byte Y=255);
 	void printChar(char c, byte X=255, byte Y=255);
 	void printString(const char *String, byte X=255, byte Y=255, byte numChar=255);
 	byte printNumber(long n, byte X=255, byte Y=255);
