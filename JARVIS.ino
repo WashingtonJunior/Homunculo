@@ -44,9 +44,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(); //using the default add
 
 //byte packetBuffer[MAXDATA]; //buffer to hold incoming and outgoing packets
 
-short lastpos[16];
-short mempos[16][16];
-short curmempos = 0;
+short lastpulse[16];
+//short mempos[16][16];
+//short curmempos = 0;
 short servomin[16];
 short servomax[16];
 bool aceleracao = 0;
@@ -68,8 +68,8 @@ void setup() {
 
   Serial.print("SizeOf toExecute: ");
   Serial.println(sizeof(toExecute));
-  Serial.print("SizeOf lastpos: ");
-  Serial.println(sizeof(lastpos));
+  Serial.print("SizeOf lastpulse: ");
+  Serial.println(sizeof(lastpulse));
   Serial.print("SizeOf aceleracao: ");
   Serial.println(sizeof(aceleracao));
   Serial.print("SizeOf localPort: ");
@@ -149,15 +149,10 @@ void setup() {
   
   pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
 
-  //Reseting lastpos and mempos for all servos
-  for (int i=0;i<16;i++)
+  //Reseting lastpulse and mempos for all servos
+  for (byte i=0;i<16;i++)
   {
-    lastpos[i]=-1;
-
-    for (int j=0;j<16;j++)
-    {
-      mempos[i][j] = -1;
-    }
+    lastpulse[i]=-1;
 
     servomin[i] = SERVOMIN;
     servomax[i] = SERVOMAX;
@@ -236,7 +231,7 @@ void setup() {
 void loop() {
   char data[MAXDATA];
   int numero;
-  int recebeu = 0;
+  bool recebeu = 0;
 
   if (Serial.available() > 0)
   {
@@ -343,6 +338,7 @@ void loop() {
 
 				  int inidata = 0;
 
+				  // Substituir por strcat?
 				  if (recebeu)
 				  {
 					  for (inidata = 0; inidata < MAXDATA; inidata++)
@@ -433,7 +429,7 @@ void loop() {
 		}
 		else if (strcmp(recebido, "DISTANCE")==0)
 		{
-			char resp[MAXDATA];
+			char resp[10];
   
 			int qt = sprintf(resp, "%i", getDistanceinCM());
           
@@ -446,7 +442,7 @@ void loop() {
 		{
 			char resp[2];
 
-			int qt = sprintf(resp, "%i", isBusy);
+			byte qt = sprintf(resp, "%i", isBusy);
 
 			sendData(resp, qt);
 		}
@@ -454,7 +450,7 @@ void loop() {
 		{
 			Serial.println("ALL OFF");
   
-			for (int i=0;i<16;i++)
+			for (byte i=0;i<16;i++)
 			{
 				offServo(i);
 			}
@@ -478,7 +474,7 @@ void loop() {
 		}
 		else if (recebido[0]=='~')
 		{
-			int tempo = getValue(recebido);
+			short tempo = getValue(recebido);
 			Serial.print("DELAY: ");
 			Serial.println(tempo);
 			delay(tempo);
@@ -610,15 +606,15 @@ void loop() {
 		}
 		else if (recebido[0]=='!')
 		{
-			int servo = getValue(recebido);
+			byte servo = (byte)getValue(recebido);
 			Serial.print("OFF: ");
 			Serial.println(servo);
 			offServo(servo);
 		}
 		else if (recebido[0]=='(')
 		{
-			int servonum = getValue(recebido);
-			int minvalue = getExtraValue(recebido);
+			byte servonum = getValue(recebido);
+			short minvalue = getExtraValue(recebido);
         
 			Serial.print("Servo:");
 			Serial.print(servonum);
@@ -629,8 +625,8 @@ void loop() {
 		}
 		else if (recebido[0]==')')
 		{
-			int servonum = getValue(recebido);
-			int maxvalue = getExtraValue(recebido);
+			byte servonum = getValue(recebido);
+			short maxvalue = getExtraValue(recebido);
         
 			Serial.print("Servo:");
 			Serial.print(servonum);
@@ -672,7 +668,7 @@ void loop() {
   
 			char cmds[16][16];
   
-			for (int i=0;i<15;i++)
+			for (byte i=0;i<15;i++)
 			{
 				cmds[i][0] = '\0';
 			}
@@ -723,12 +719,12 @@ void loop() {
 
 }
 
-int getValue(char *data)
+short getValue(char *data)
 {
     char ndata[MAXDATA];
-    int j=0;
+    short j=0;
     
-    for (int i=1;i<MAXDATA;i++)
+    for (short i=1;i<MAXDATA;i++)
     {
       if (data[i]==':')
       {
@@ -741,8 +737,8 @@ int getValue(char *data)
       }
       j++;
     }
-    int nvalor = (int)ndata[0];
-    int valor = -1;
+    short nvalor = (short)ndata[0];
+    short valor = -1;
     
     if (nvalor>=65)
     {
@@ -750,7 +746,7 @@ int getValue(char *data)
     }
     else
     {
-      valor = atoi(ndata);  
+      valor = (short)atoi(ndata);  
     }
 
     return valor;
@@ -865,18 +861,18 @@ int playServo(char *data)
 
 int playServos(char data[16][16])
 {
-    int servonums[16];
-    int angulos[16];
-    int velocidade = 0;
+    short servonums[16];
+    short angulos[16];
+    short velocidade = 0;
 
-    for (int i=0;i<16;i++)
+    for (short i=0;i<16;i++)
     {
       servonums[i] = -1;
       
-      if ((int)data[i][0]==0)
+      if ((short)data[i][0]==0)
         break;
         
-      int pri = (int)data[i][0];
+      short pri = (short)data[i][0];
 
       if (pri>=65)
       {
@@ -884,7 +880,7 @@ int playServos(char data[16][16])
       }
       else
       {
-        velocidade = atoi(data[i]);
+        velocidade = (short)atoi(data[i]);
         break;
       }
       
@@ -915,7 +911,8 @@ int moveServo(int servonum, int pos, int velocidade)
       velocidade = 1;
 
     int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
-    int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
+    //int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
+	int plold = lastpulse[servonum];
     int dif = pulselength-plold;
 
     /*
@@ -961,57 +958,58 @@ int moveServo(int servonum, int pos, int velocidade)
     }
     pwm.setPWM(servonum, 0, pulselength);
 
-    lastpos[servonum] = pos;
+    lastpulse[servonum] = pulselength;
     
     return pulselength;
 }
 
 
-void moveServos(int servonums[], int poss[], int velocidade)
+void moveServos(short servonums[], short poss[], short velocidade)
 {
-    int incrs[16];
+    short incrs[16];
 
-    for (int i=0; i<16; i++)
+    for (short i=0; i<16; i++)
     {
       incrs[i] = 0;
     }
     
-    int pulso = -1;
+    short pulso = -1;
 
     if (velocidade<=0)
       velocidade = 1;
 
     if (velocidade>1)
     {
-      for (int v=velocidade; v>0; v--)
+      for (short v=velocidade; v>0; v--)
       {
-        for (int k=0;k<16;k++)
+        for (short k=0;k<16;k++)
         {
-          int servonum = servonums[k];
+          short servonum = servonums[k];
 
           if (servonum==-1)
             break;
             
-          int pos = poss[k];
+          short pos = poss[k];
         
-          int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
-          int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
-          int dif = pulselength-plold;
+          short pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
+          //int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
+		  short plold = lastpulse[servonum];
+          short dif = pulselength-plold;
 
-          /*
-          Serial.print(k);
-          Serial.println(" ***");
-          Serial.print("  plold/pulselength: ");
+          Serial.print(servonum);
+          Serial.print("pulselength, plold, pulso -> ");
+		  Serial.print(pulselength);
+          Serial.print(", ");
           Serial.print(plold);
-          Serial.print("  /");
-          Serial.println(pulselength);
-          */
+          Serial.print(", ");
           
-          int incr;
+          short incr;
           
           if (incrs[k]==0)
           {
-            incr = dif / velocidade;
+			//incr = (dif + velocidade - 1) / velocidade; // Round up (only for positive)
+			incr = dif / velocidade;
+
             incrs[k] = incr;
           }
           else
@@ -1031,22 +1029,20 @@ void moveServos(int servonums[], int poss[], int velocidade)
             pulso += incr;
           }
 
-          /*
-          Serial.print(v);
-          Serial.print("->");
           Serial.print(pulso);
           Serial.print(" (incr: ");
           Serial.print(incr);
-          Serial.print(")");
-          */
+          Serial.println(")");
 
-          int npos = -1;
+          short npos = -1;
           
-          if (lastpos[servonum]==-1) // Nao tem posicao anterior
+          if (lastpulse[servonum]==-1) // Nao tem posicao anterior
           {
             pwm.setPWM(servonum, 0, pulselength);
             npos = map(pulselength, servomin[servonum], servomax[servonum], 0, 180);
-          }
+			
+			lastpulse[servonum] = pulselength;
+		  }
           else
           {
 			//if (pulso > pulselength)
@@ -1054,47 +1050,44 @@ void moveServos(int servonums[], int poss[], int velocidade)
 
             pwm.setPWM(servonum, 0, pulso);
             npos = map(pulso, servomin[servonum], servomax[servonum], 0, 180);
-          }
+			
+			lastpulse[servonum] = pulso;
+		  }
 
-          lastpos[servonum] = npos;
 
-          /*
-          Serial.print("[");
-          Serial.print(npos);
-          Serial.print(" graus]");
-          */
+          //Serial.print(" [");
+          //Serial.print(npos);
+          //Serial.println(" graus]");
         }
         delay(PAUSE);
       }
     }
 
-    for (int k=0;k<16;k++)
+    for (short k=0;k<16;k++)
     {
-      int servonum = servonums[k];
+      short servonum = servonums[k];
       if (servonum==-1)
         break;
         
-      int pos = poss[k];
-      int pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
+      short pos = poss[k];
+      short pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
 
-      /*
       Serial.print("Final ");
       Serial.print(servonum);
       Serial.print(": ");
       Serial.println(pulselength);
-      */
       
       pwm.setPWM(servonum, 0, pulselength);
 
-      lastpos[servonum] = pos;
+      lastpulse[servonum] = pulselength;
     }
 }
 
-int offServo(int servonum)
+int offServo(short servonum)
 {
     pwm.setPWM(servonum, 0, 0);
 
-    lastpos[servonum] = -1;
+    lastpulse[servonum] = -1;
 
     return 0;
 }
