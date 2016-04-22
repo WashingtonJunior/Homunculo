@@ -22,12 +22,13 @@
 
 unsigned char img[1024];
 
-char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
-char pass[] = "bc25fcb38b";    // your network password
+const char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
+const char pass[] = "bc25fcb38b";    // your network password
 
-char folder[] = "/jarvis/";
+const char folder[] = "/jarvis/";
 
-unsigned int localPort = 2390;      // local TCP port
+#define localPort 2390
+//unsigned int localPort = 2390;      // local TCP port
 
 LWiFiServer server(localPort);
 LWiFiClient client;
@@ -41,22 +42,20 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(); //using the default add
 #define LASERPIN 2
 #define PAUSE 50
 
-byte packetBuffer[MAXDATA]; //buffer to hold incoming and outgoing packets
+//byte packetBuffer[MAXDATA]; //buffer to hold incoming and outgoing packets
 
-int lastpos[16];
-int mempos[16][16];
-int curmempos = 0;
-int servomin[16];
-int servomax[16];
-int aceleracao = 0;
-int BT = 0;
-int automatic = 0;
-int idxauto = 0;
-int reconectar = 1;
-int reconectarMsg = 0;
-int reconectarMsgBT = 0;
-int laser = 0;
-int isBusy = 0;
+short lastpos[16];
+short mempos[16][16];
+short curmempos = 0;
+short servomin[16];
+short servomax[16];
+bool aceleracao = 0;
+bool BT = 0;
+bool reconectar = 1;
+bool reconectarMsg = 0;
+bool reconectarMsgBT = 0;
+bool laser = 0;
+bool isBusy = 0;
 
 char toExecute[MAXDATA];
 
@@ -67,15 +66,21 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(115200);
 
+  Serial.print("SizeOf toExecute: ");
+  Serial.println(sizeof(toExecute));
+  Serial.print("SizeOf lastpos: ");
+  Serial.println(sizeof(lastpos));
+  Serial.print("SizeOf aceleracao: ");
+  Serial.println(sizeof(aceleracao));
+  Serial.print("SizeOf localPort: ");
+  Serial.println(sizeof(localPort));
+  Serial.print("SizeOf ssid: ");
+  Serial.println(sizeof(ssid));
+
   Serial.print("Initializing SDcard...");
   pinMode(10, OUTPUT); // CS pin for sdcard/storage
   Serial.println(Drv.begin());
   Serial.println("initialization done.");
-  //LFile root = Drv.open("/jarvis");
-  //printDirectory(root, 0);
-  //Serial.println("done!");
-
-  //readSeqFile("/jarvis/inicial.seq");
 
   // Head Init
   OzOled.init();  //initialze Oscar OLED display
@@ -233,24 +238,6 @@ void loop() {
   int numero;
   int recebeu = 0;
 
-  /*
-  if (automatic==1)
-  {
-    strcpy(data, procedimento[idxauto]);
-    
-    idxauto++;
-
-    if ((idxauto>=MAXDATA) || (data[0]=='\0'))
-    {
-      idxauto = 0;
-    }
-    else
-    {
-      recebeu = 1;
-    }
-  }
-  */
-
   if (Serial.available() > 0)
   {
     numero = Serial.readBytesUntil (13,data,MAXDATA);
@@ -283,14 +270,16 @@ void loop() {
     {
       if (client.available())
       {
-        memset(packetBuffer, 0, MAXDATA);
-        client.read(packetBuffer, MAXDATA); // read the packet into the buffer
-        for (int i = 0; i < MAXDATA; ++i)
-        {
-          char c = packetBuffer[i];
-          data[i] = c;
-        }
-        
+        //memset(packetBuffer, 0, MAXDATA);
+        //client.read(packetBuffer, MAXDATA); // read the packet into the buffer
+        //for (int i = 0; i < MAXDATA; ++i)
+        //{
+        //  char c = packetBuffer[i];
+        //  data[i] = c;
+        //}
+		memset(data, 0, MAXDATA);
+		client.read((unsigned char*)data, MAXDATA); // read the packet into the buffer
+
         recebeu = 1;
         
         Serial.print("Recebeu via TCP: ");
@@ -442,11 +431,6 @@ void loop() {
 			reconectarMsg = 0;
 			Serial.println("RESET");
 		}
-		else if (strcmp(recebido, "AUTO")==0)
-		{
-			Serial.println("AUTO WALK");
-			automatic = 1;
-		}
 		else if (strcmp(recebido, "DISTANCE")==0)
 		{
 			char resp[MAXDATA];
@@ -501,9 +485,9 @@ void loop() {
 		}
 		else if (recebido[0] == '@')
 		{
-			char arq[128];
+			char arq[MAXDATAFILE];
 
-			memset(arq, 0, 128);
+			memset(arq, 0, MAXDATAFILE);
 
 			//strcpy(arq, folder);
 			//strcpy(arq, "/");
@@ -577,14 +561,34 @@ void loop() {
 
 			char content[MAXDATA];
 
-			int tam = readSeqFileX(arq, content);
+			int tam = readSeqFileX(arq, content, 1);
 
+			if (tam >= 0)
+			{
+				strcat(toExecute, content);
+				/*
+				Serial.print(idx);
+				Serial.print(") Recebido = ");
+				Serial.println(recebido);
+
+				tokens[idx][0] = '\0';
+				strcpy(tokens[idx], content);
+
+				Serial.print("Tokens[");
+				Serial.print(idx);
+				Serial.print("] = ");
+				Serial.println(tokens[idx]);
+
+				//idx--;
+				*/
+			}
 			//Serial.print("content = '");
 			//Serial.print(content);
 			//Serial.println("'");
 			//Serial.println(tam);
 
-			strcat(toExecute, content);
+
+			
 
 			/*
 			char content[MAXDATAFILE][MAXDATAFILE];
@@ -1157,7 +1161,7 @@ int getFeedback(int pino)
     return(result);
 }
 
-int split(char* data, char* separador, char retorno[MAXDATA][MAXDATA])
+int split(char* data, const char* separador, char retorno[MAXDATA][MAXDATA])
 {
     char* dado = strtok(data, separador);
 
@@ -1284,6 +1288,7 @@ void printDirectory(LFile dir, int numTabs) {
 	}
 }
 
+/*
 int readSeqFile(char *arq, char retorno[MAXDATAFILE][MAXDATAFILE])
 {
 	LFile myFile;
@@ -1441,13 +1446,14 @@ int readSeqFileStr(char *arq, char retorno[MAXDATA])
 
 	return strlen(retorno);
 }
+*/
 
-
-int readSeqFileX(char *arq, char retorno[MAXDATA])
+int readSeqFileX(char *arq, char retorno[MAXDATA], bool deep)
 {
 	LFile myFile;
 	int linha = 0;
 	int col = 0;
+	int continuar = 0;
 	char linhas[MAXDATAFILE][MAXDATA];
 
 	memset(linhas[linha], 0, MAXDATA);
@@ -1504,18 +1510,26 @@ int readSeqFileX(char *arq, char retorno[MAXDATA])
 
 			if (sLinha.endsWith(".seq"))
 			{
-				String nLinha = String(folder);
-				//nLinha += folder;
-				nLinha += sLinha;
+				if (deep)
+				{
+					String nLinha = String(folder);
+					nLinha += sLinha;
 
-				char cont[MAXDATA];
-				char arqn[MAXDATAFILE];
+					char cont[MAXDATA];
+					char arqn[MAXDATAFILE];
 
-				nLinha.toCharArray(arqn, nLinha.length() + 1);
+					nLinha.toCharArray(arqn, nLinha.length() + 1);
 
-				readSeqFileX(arqn, cont);
+					readSeqFileX(arqn, cont, deep);
 
-				strcat(retorno, cont);
+					strcat(retorno, cont);
+				}
+				else
+				{
+					strcat(retorno, "^");
+					strcat(retorno, linhas[i]);
+					strcat(retorno, "|");
+				}
 			}
 			else
 			{
@@ -1523,9 +1537,19 @@ int readSeqFileX(char *arq, char retorno[MAXDATA])
 				strcat(retorno, "|");
 			}
 
+			Serial.print(strlen(retorno));
+			Serial.print(" :: ");
 			Serial.print("retorno = '");
 			Serial.print(retorno);
 			Serial.println("'");
+
+			//if (strlen(retorno) >= (MAXDATA / 3))
+			//{
+			//	continuar = linha;
+			//	Serial.print("Continuar = ");
+			//	Serial.println(continuar);
+			//	break;
+			//}
 		}
 	}
 	else
@@ -1533,13 +1557,14 @@ int readSeqFileX(char *arq, char retorno[MAXDATA])
 		// if the file didn't open, print an error:
 		Serial.print("error opening ");
 		Serial.println(arq);
+		linha = -1;
 	}
 
 	return linha;
 }
 
 
-int readImgFile(char *arq)
+int readImgFile(const char *arq)
 {
 	LFile myFile;
 	int idx = 0;
