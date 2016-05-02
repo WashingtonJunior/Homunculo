@@ -4,6 +4,14 @@ Public Class MainForm
     Dim serial As System.IO.Ports.SerialPort = Nothing
     Dim tcp As System.Net.Sockets.TcpClient = Nothing
 
+    Public ReadOnly Property Pasta As String
+        Get
+            Dim pst As String = IO.Path.Combine(Application.StartupPath, "jarvis")
+
+            Return pst
+        End Get
+    End Property
+
     Public ReadOnly Property pausaEntreEnvios As Integer
         Get
             Dim i As Integer = 0
@@ -29,6 +37,10 @@ Public Class MainForm
     End Sub
 
     Public Function CarregarPosiçõesString(ByVal arq As String) As String
+        If arq.StartsWith("^") Then
+            arq = arq.Substring(1)
+        End If
+
         Dim posições() As String = CarregarPosições(arq)
         Dim paraenviar As New System.Text.StringBuilder()
 
@@ -60,7 +72,7 @@ Public Class MainForm
             Dim arqs() As String = dados.Split("|")
 
             For Each arq As String In arqs
-                If arq.Contains(".seq") Then
+                If arq.StartsWith("^") Then
                     dados = dados.Replace(arq, CarregarPosiçõesString(arq))
                 End If
             Next
@@ -223,7 +235,7 @@ Public Class MainForm
 
     Private Sub btnGravar_Click(sender As Object, e As EventArgs) Handles btnGravar.Click
         Dim nome As String = InputBox("Digite o nome do movimento:")
-        Dim arq As String = IO.Path.Combine(Application.StartupPath, nome & ".seq")
+        Dim arq As String = IO.Path.Combine(Me.Pasta, nome & ".seq")
 
         Dim sw As New IO.StreamWriter(arq)
 
@@ -238,7 +250,7 @@ Public Class MainForm
     Public Sub CarregarMovimentos()
         lbMovimentos.Items.Clear()
 
-        Dim arqs() As String = IO.Directory.GetFiles(Application.StartupPath, "*.seq")
+        Dim arqs() As String = IO.Directory.GetFiles(Me.Pasta, "*.seq")
 
         For Each arq As String In arqs
             lbMovimentos.Items.Add(IO.Path.GetFileName(arq))
@@ -270,7 +282,7 @@ Public Class MainForm
     End Sub
 
     Public Function CarregarPosições(ByVal nome As String) As String()
-        Dim arq As String = IO.Path.Combine(Application.StartupPath, nome.Replace("|", ""))
+        Dim arq As String = IO.Path.Combine(Me.Pasta, nome.Replace("|", ""))
 
         Dim sr As New IO.StreamReader(arq)
         Dim chunk As String = sr.ReadToEnd()
@@ -401,7 +413,7 @@ Public Class MainForm
         If lbMovimentos.SelectedIndex >= 0 Then
             Dim nomearq As String = lbMovimentos.SelectedItem
 
-            Dim arq As String = IO.Path.Combine(Application.StartupPath, nomearq)
+            Dim arq As String = IO.Path.Combine(Me.Pasta, nomearq)
 
             Dim sr As New IO.StreamReader(arq)
             Dim chunk As String = sr.ReadToEnd()
@@ -428,7 +440,7 @@ Public Class MainForm
         If lbMovimentos.SelectedIndex >= 0 Then
             Dim nome As String = lbMovimentos.SelectedItem
 
-            lbPosições.Items.Add(nome)
+            lbPosições.Items.Add("^" & nome)
         End If
     End Sub
 

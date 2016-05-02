@@ -19,8 +19,24 @@
 
 #define MAXDATA 640
 #define MAXDATAFILE 128
+#define MAXTOKEN 64
+#define MAXQTTOKEN 128
+#define IMGSIZE 1024
 
-unsigned char img[1024];
+struct list {
+	char val[MAXTOKEN];
+	struct list * next;
+};
+
+typedef struct list item;
+
+item *current, *root, *tail;
+
+item *listAdd(char *s);
+item *listInsert(char *s, item *it);
+
+unsigned char img[IMGSIZE];
+unsigned char seq[1024];
 
 const char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
 const char pass[] = "bc25fcb38b";    // your network password
@@ -42,8 +58,6 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(); //using the default add
 #define LASERPIN 2
 #define PAUSE 50
 
-//byte packetBuffer[MAXDATA]; //buffer to hold incoming and outgoing packets
-
 short lastpulse[16];
 //short mempos[16][16];
 //short curmempos = 0;
@@ -59,13 +73,38 @@ bool isBusy = 0;
 
 char toExecute[MAXDATA];
 
-LFile root;
+LFile myFile;
 IPAddress ip;
 
 void setup() {
   Serial.begin(9600);
-  Serial1.begin(115200);
 
+  /*
+  Serial.println("inicio linkedlist");
+
+  root = NULL;
+
+  listAdd("teste1");
+  item *x = listAdd("teste2");
+  listAdd("teste4");
+  listAdd("teste5");
+
+  listInsert("teste3", x);
+
+  */
+
+  //current = root;
+
+  //while (current) {
+  //	  Serial.println(current->val);
+  //	  current = current->next;
+  //}
+
+  //Serial.println("fim linkedlist");
+
+  //Serial1.begin(115200);
+
+  /*
   Serial.print("SizeOf toExecute: ");
   Serial.println(sizeof(toExecute));
   Serial.print("SizeOf lastpulse: ");
@@ -76,6 +115,7 @@ void setup() {
   Serial.println(sizeof(localPort));
   Serial.print("SizeOf ssid: ");
   Serial.println(sizeof(ssid));
+  */
 
   Serial.print("Initializing SDcard...");
   pinMode(10, OUTPUT); // CS pin for sdcard/storage
@@ -86,7 +126,7 @@ void setup() {
   OzOled.init();  //initialze Oscar OLED display
   delay(50);
 
-  readImgFile("jarvis/blink.img");
+  //readImgFile("jarvis/blink.img");
 
   // Head display
   //OzOled.setCursorXY(2, 0);
@@ -139,7 +179,7 @@ void setup() {
   memset(toExecute, 0, MAXDATA);
   toExecute[0] = '\0';
 
-  strcat(toExecute, "^init.seq|BT|#blink.img|");
+  strcat(toExecute, "#blink.img|^init.seq|BT|");
 
 
   Serial.println("J.A.R.V.I.S. Loaded!");
@@ -176,18 +216,6 @@ void setup() {
 
   delay(5000);
 
-  /*
-  char *arq = "/andar.seq";
-
-  if (Drv.exists(arq))
-  {
-	  Serial.println("Exists.");
-  }
-  else
-  {
-	  Serial.println("Doesn't exist.");
-  }
-  */
   // attempt to start Bluetooth Server
   bool success = LBTServer.begin((uint8_t*)SPP_SVR);
   if (!success)
@@ -374,7 +402,11 @@ void loop() {
 
   if (recebeu)
   {
-    char tokens[MAXDATA][MAXDATA];
+    //char tokens[MAXDATA][MAXDATA];
+	char tokens[MAXQTTOKEN][MAXTOKEN];
+
+	Serial.print("SizeOf tokens: ");
+	Serial.println(sizeof(tokens));
 
     //clearStr(tokens, MAXDATA);
     //memset(tokens, 0, MAXDATA);
@@ -395,32 +427,30 @@ void loop() {
 	Serial.print("qttokens = ");
 	Serial.println(qttokens);
 
-    for (int idx=0;idx<qttokens;idx++)
-    {
+	for (int idx = 0; idx < qttokens; idx++)
+	{
+		listAdd(tokens[idx]);
+	}
+
+	current = root;
+
+	while (current)
+	{
+		Serial.print("current->val = '");
+		Serial.print(current->val);
+		Serial.println("'");
+
 		delay(PAUSE);
 
-		char recebido[MAXDATA];
+		char recebido[MAXTOKEN];
 
+		memset(recebido, 0, MAXTOKEN);
 
-		Serial.print("token[");
-		Serial.print(idx);
-		Serial.print("] = ");
-		Serial.println(tokens[idx]);
-
-		memset(recebido, 0, MAXDATA);
-
-		strcpy(recebido, tokens[idx]);
+		strcpy(recebido, current->val);
 
 		if (recebido[0]=='\0')
 			break;
 
-		//Serial.print(idx);
-		//Serial.print(" = ");
-		//Serial.print("Recebido: ");
-		//Serial.println(recebido);
-		//Serial.print("==RESET: ");
-		//Serial.print(strcmp(recebido, "RESET"));
-      
 		if (strcmp(recebido, "RESET")==0)
 		{
 			reconectar = 1;
@@ -555,14 +585,78 @@ void loop() {
 			Serial.println("'");
 			//Serial.println("':");
 
-			char content[MAXDATA];
+			//char content[MAXDATA];
+
+			Serial.println("readSeqFile");
+			int tamx = readSeqFile(arq);
+			Serial.print(tamx);
+			Serial.print(", ");
+			Serial.print(strlen((const char*)seq));
+			Serial.println();
+			Serial.print("seq='");
+			Serial.print((const char*)seq);
+			Serial.println("'");
+			Serial.println();
+
+			if (tamx >= 0)
+			{
+				//strcat(toExecute, (const char*)seq);
+
+				char xtokens[MAXQTTOKEN][MAXTOKEN];
+
+				int xqttokens = split((char *)seq, "|", xtokens);
+
+				Serial.print("xqttokens = ");
+				Serial.println(xqttokens);
+
+				item *atual = current;
+
+				for (int idx = 0; idx < xqttokens; idx++)
+				{
+					Serial.print("Inserindo '");
+					Serial.print(xtokens[idx]);
+					Serial.println("'");
+
+					Serial.print(atual->val);
+					atual = listInsert(xtokens[idx], atual);
+					Serial.print(" -> ");
+					Serial.println(atual->val);
+
+					Serial.println("inseriu!");
+				}
+
+				listPrint();
+
+				//for (int c=MAXQTTOKEN-xqttokens;)
+				//strcpy(tokens[idx], (const char*)seq);
+
+				//Serial.print("NEW tokens[");
+				//Serial.print(idx);
+				//Serial.print("] = '");
+				//Serial.print(tokens[idx]);
+				//Serial.println("'");
+
+				//idx--;
+				//Serial.print("toExecute='");
+				//Serial.print(toExecute);
+				//Serial.print("' - ");
+				//Serial.print("size toExecute: ");
+				//Serial.println(strlen(toExecute));
+			}
+
+			/*
+			Serial.println("readSeqFileX");
 
 			int tam = readSeqFileX(arq, content, 1);
+
+			Serial.println("Passou readSeqFileX!");
+			//break;
+
 
 			if (tam >= 0)
 			{
 				strcat(toExecute, content);
-				/*
+
 				Serial.print(idx);
 				Serial.print(") Recebido = ");
 				Serial.println(recebido);
@@ -576,14 +670,14 @@ void loop() {
 				Serial.println(tokens[idx]);
 
 				//idx--;
-				*/
 			}
 			//Serial.print("content = '");
 			//Serial.print(content);
 			//Serial.println("'");
 			//Serial.println(tam);
+			*/
 
-
+			
 			
 
 			/*
@@ -699,8 +793,22 @@ void loop() {
 			isBusy = 1;
 			playServo(recebido);
 		}
-    }
 
+		Serial.print("Vai de "); 
+		Serial.print(current->val);
+
+		item *nxt = current->next;
+
+		free(current);
+
+		current = nxt;
+		//current = current->next;
+
+		Serial.print(" para ");
+		Serial.println(current->val);
+	}
+
+	root = NULL;
 	isBusy = 0;
   }
 
@@ -721,10 +829,10 @@ void loop() {
 
 short getValue(char *data)
 {
-    char ndata[MAXDATA];
+    char ndata[MAXTOKEN];
     short j=0;
     
-    for (short i=1;i<MAXDATA;i++)
+    for (short i=1;i<MAXTOKEN;i++)
     {
       if (data[i]==':')
       {
@@ -754,10 +862,10 @@ short getValue(char *data)
 
 int getIntValue(char *data)
 {
-	char ndata[MAXDATA];
+	char ndata[MAXTOKEN];
 	int j = 0;
 
-	for (int i = 1; i<MAXDATA; i++)
+	for (int i = 1; i<MAXTOKEN; i++)
 	{
 		if (data[i] == ':')
 		{
@@ -777,11 +885,11 @@ int getIntValue(char *data)
 
 int getExtraValue(char *data)
 {
-    char ndata[MAXDATA];
+    char ndata[MAXTOKEN];
     int j=0;
     bool achou=0;
     
-    for (int i=1;i<MAXDATA;i++)
+    for (int i=1;i<MAXTOKEN;i++)
     {
       if (data[i]==':')
       {
@@ -793,7 +901,7 @@ int getExtraValue(char *data)
       {
         ndata[j]=data[i];
         j++;
-        if (j<MAXDATA)
+        if (j<MAXTOKEN)
           ndata[j]='\0';
       }
     }
@@ -982,6 +1090,8 @@ void moveServos(short servonums[], short poss[], short velocidade)
     {
       for (short v=velocidade; v>0; v--)
       {
+		bool pausar = 1;
+
         for (short k=0;k<16;k++)
         {
           short servonum = servonums[k];
@@ -992,9 +1102,19 @@ void moveServos(short servonums[], short poss[], short velocidade)
           short pos = poss[k];
         
           short pulselength = map(pos, 0, 180, servomin[servonum], servomax[servonum]);
-          //int plold = map(lastpos[servonum], 0, 180, servomin[servonum], servomax[servonum]);
 		  short plold = lastpulse[servonum];
-          short dif = pulselength-plold;
+
+		  if (pulselength == plold)
+		  {
+			  pausar = 0;
+		  	  break;
+		  }
+		  //else
+		  //{
+		  //	  all = false;
+		  //}
+
+		  short dif = pulselength-plold;
 
           Serial.print(servonum);
           Serial.print("pulselength, plold, pulso -> ");
@@ -1054,13 +1174,16 @@ void moveServos(short servonums[], short poss[], short velocidade)
 			lastpulse[servonum] = pulso;
 		  }
 
-
           //Serial.print(" [");
           //Serial.print(npos);
           //Serial.println(" graus]");
         }
-        delay(PAUSE);
-      }
+		if (pausar)
+			delay(PAUSE);
+
+		//if (all)
+		//	break;
+	  }
     }
 
     for (short k=0;k<16;k++)
@@ -1154,7 +1277,7 @@ int getFeedback(int pino)
     return(result);
 }
 
-int split(char* data, const char* separador, char retorno[MAXDATA][MAXDATA])
+int split(char* data, const char* separador, char retorno[MAXQTTOKEN][MAXTOKEN])
 {
     char* dado = strtok(data, separador);
 
@@ -1164,15 +1287,15 @@ int split(char* data, const char* separador, char retorno[MAXDATA][MAXDATA])
     {
 //		memset(retorno[cont], 0, MAXDATA);
 
-		for (int i = 0; i < 50; i++)
+		for (int i = 0; i < MAXTOKEN; i++)
 		{
 			retorno[cont][i] = '\0';
 		}
 		
-		Serial.print("dado = ");
-		Serial.println(dado);
-		//Serial.print("retorno[");
-		//Serial.print(cont);
+		Serial.print("dado = '");
+		Serial.print(dado);
+		Serial.print("' size = ");
+		Serial.println(strlen(dado));
 		//Serial.print("] = ");
 		//Serial.println(retorno[cont]);
 
@@ -1184,6 +1307,9 @@ int split(char* data, const char* separador, char retorno[MAXDATA][MAXDATA])
 		Serial.println(retorno[cont]);
 		cont++;
       
+		if (cont > MAXQTTOKEN)
+			break;
+
 		dado = strtok(NULL, separador);
     }
 
@@ -1441,25 +1567,38 @@ int readSeqFileStr(char *arq, char retorno[MAXDATA])
 }
 */
 
-int readSeqFileX(char *arq, char retorno[MAXDATA], bool deep)
+/*
+//Só funciona com MAXDATA, MAXTOKENS e MAXQTTOKENS todos iguais a 640
+int readSeqFileX(const char *arq, char retorno[MAXDATA], bool deep)
 {
-	LFile myFile;
+	Serial.println("readSeqFileX");
+
 	int linha = 0;
 	int col = 0;
 	int continuar = 0;
+
 	char linhas[MAXDATAFILE][MAXDATA];
 
+//	Serial.println("foi!");
+
 	memset(linhas[linha], 0, MAXDATA);
+
+	Serial.println("fim memset");
+	//return 0;
 
 	// re-open the file for reading:
 	myFile = Drv.open(arq);
 	if (myFile)
 	{
+		//Serial.print("Abriu: ");
 		//Serial.println(arq);
+
+		//return 0;
+
 		myFile.seek(0);
 		// read from the file until there's nothing else in it:
 		while (myFile.available()) {
-			char c = myFile.read();
+			unsigned char c = myFile.read();
 
 			//Serial.print(c);
 			//Serial.print(" -> ");
@@ -1475,7 +1614,7 @@ int readSeqFileX(char *arq, char retorno[MAXDATA], bool deep)
 				col++;
 			}
 
-			Serial.print(c);
+			//Serial.print(c);
 
 			if (col >= MAXDATA)
 				Serial.println("Estouro de caracteres na linha!");
@@ -1500,6 +1639,9 @@ int readSeqFileX(char *arq, char retorno[MAXDATA], bool deep)
 		for (int i = 0; i < linha; i++)
 		{
 			String sLinha = String(linhas[i]);
+
+			//Serial.print("sizeof sLinha = ");
+			//Serial.println(sizeof(sLinha));
 
 			if (sLinha.endsWith(".seq"))
 			{
@@ -1555,37 +1697,57 @@ int readSeqFileX(char *arq, char retorno[MAXDATA], bool deep)
 
 	return linha;
 }
-
+*/
 
 int readImgFile(const char *arq)
 {
-	LFile myFile;
 	int idx = 0;
 
-	myFile = Drv.open(arq);
-	if (myFile)
+	if (Drv.exists((char *)arq))
 	{
-		myFile.seek(0);
-		// read from the file until there's nothing else in it:
-		while (myFile.available()) {
-			unsigned char c = myFile.read();
+		myFile = Drv.open(arq);
+		if (myFile)
+		{
+			myFile.seek(0);
+			// read from the file until there's nothing else in it:
+			while (myFile.available()) {
+				unsigned char c = myFile.read();
 
-			img[idx] = c;
-			idx++;
+				img[idx] = c;
+				idx++;
+
+				if (idx > IMGSIZE)
+				{
+					Serial.println("Image size overflow!");
+					break;
+				}
+			}
+			// close the file:
+			myFile.close();
 		}
-		// close the file:
-		myFile.close();
+		else
+		{
+			// if the file didn't open, print an error:
+			Serial.print("error opening ");
+			Serial.println(arq);
+		}
 	}
 	else
 	{
-		// if the file didn't open, print an error:
-		Serial.print("error opening ");
+		Serial.print("file not exists ");
 		Serial.println(arq);
 	}
+	//Serial.print("Idx = ");
+	//Serial.println(idx);
 
-	showImg();
-	showBattery();
-	showIP();
+	//if (idx > 0)
+	//{
+		showImg();
+		showBattery();
+		showIP();
+	//}
+
+	//Serial.println("After if");
 
 	return idx;
 }
@@ -1625,4 +1787,102 @@ void showBattery()
 	{
 		OzOled.printString(" ");
 	}
+}
+
+int readSeqFile(const char *arq)
+{
+	int idx = 0;
+
+	myFile = Drv.open(arq);
+	if (myFile)
+	{
+		myFile.seek(0);
+		// read from the file until there's nothing else in it:
+		while (myFile.available()) {
+			unsigned char c = myFile.read();
+			bool skip = 0;
+
+			//Serial.print((char)c);
+			//Serial.print(" -> ");
+			//Serial.print((int)c);
+
+			if (c == 13)
+			{
+				c = '|';
+			}
+			else if (c == 10)
+			{
+				skip = 1;
+			}
+
+			//Serial.print(" - ");
+			//Serial.println((int)skip);
+
+			if (!skip)
+			{
+				seq[idx] = c;
+				idx++;
+			}
+		}
+		// close the file:
+		myFile.close();
+	}
+	else
+	{
+		// if the file didn't open, print an error:
+		Serial.print("error opening ");
+		Serial.println(arq);
+	}
+	seq[idx] = '\0';
+
+	return idx;
+}
+
+item *listAdd(char *s)
+{
+	item *novo = (item *)malloc(sizeof(item));
+
+	strcpy(novo->val, s);
+	novo->next = NULL;
+
+	if (root == NULL)
+		root = novo;
+	else
+		tail->next = novo;
+
+	tail = novo;
+
+	return novo;
+}
+
+item *listInsert(char *s, item *it)
+{
+	item *novo = (item *)malloc(sizeof(item));
+
+	if (novo == NULL)
+	{
+		Serial.println("malloc error!!!");
+	}
+	else
+	{
+		strcpy(novo->val, s);
+		novo->next = it->next;
+
+		it->next = novo;
+	}
+
+	return novo;
+}
+
+void listPrint()
+{
+	item *atual = root;
+
+	Serial.println("-- BOL --");
+	while (atual)
+	{
+		Serial.println(atual->val);
+		atual = atual->next;
+	}
+	Serial.println("-- EOL --");
 }
