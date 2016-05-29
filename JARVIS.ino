@@ -440,7 +440,7 @@ void loop() {
 		Serial.print(current->val);
 		Serial.println("'");
 
-		delay(PAUSE);
+		//delay(PAUSE);
 
 		char recebido[MAXTOKEN];
 
@@ -860,29 +860,6 @@ short getValue(char *data)
     return valor;
 }
 
-int getIntValue(char *data)
-{
-	char ndata[MAXTOKEN];
-	int j = 0;
-
-	for (int i = 1; i<MAXTOKEN; i++)
-	{
-		if (data[i] == ':')
-		{
-			ndata[j] = '\0';
-			break;
-		}
-		else
-		{
-			ndata[j] = data[i];
-		}
-		j++;
-	}
-	int valor = atoi(ndata);
-
-	return valor;
-}
-
 int getExtraValue(char *data)
 {
     char ndata[MAXTOKEN];
@@ -913,6 +890,31 @@ int getExtraValue(char *data)
       
     return valor;
 }
+
+/*
+int getIntValue(char *data)
+{
+char ndata[MAXTOKEN];
+int j = 0;
+
+for (int i = 1; i<MAXTOKEN; i++)
+{
+if (data[i] == ':')
+{
+ndata[j] = '\0';
+break;
+}
+else
+{
+ndata[j] = data[i];
+}
+j++;
+}
+int valor = atoi(ndata);
+
+return valor;
+}
+*/
 
 /*
 char* getTokens(char *data)
@@ -1353,7 +1355,7 @@ void clearStr(char data[MAXDATA][MAXDATA], int qt)
 }
 */
 
-int sendData(char data[MAXDATA], int qt)
+int sendData(char data[MAXTOKEN], int qt)
 {
   Serial.print("Enviando '");
   Serial.print(data);

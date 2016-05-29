@@ -86,8 +86,8 @@ Public Class MainForm
             If Not (dados.StartsWith("(") Or dados.StartsWith(")") Or dados.Contains("|")) AndAlso dados.Contains(":") Then
                 Dim stempo As String = dados.Substring(dados.IndexOf(":") + 1)
                 'Stop
-                Dim pausa As Integer = 50 * Integer.Parse(stempo)
-                Threading.Thread.Sleep(pausa)
+                'Dim pausa As Integer = 50 * Integer.Parse(stempo)
+                'Threading.Thread.Sleep(pausa)
             End If
             If dados.StartsWith("~") Then
                 Dim stempo As String = dados.Replace("~", "")
@@ -185,8 +185,8 @@ Public Class MainForm
 
         If sender.Selected = CheckState.Indeterminate Then
             For Each ctrl As Control In Me.Controls
-                If TypeOf ctrl Is Slider Then
-                    Dim sl As Slider = ctrl
+                If TypeOf ctrl Is ISlider Then
+                    Dim sl As ISlider = ctrl
 
                     If sl.Name <> sender.Name Then
                         If sl.Selected = CheckState.Checked OrElse sl.Selected = CheckState.Unchecked Then
@@ -597,42 +597,42 @@ Public Class MainForm
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Dim arq As String = "c:\Users\washj\desktop\teste10.txt"
-        Dim f As New IO.StreamReader(arq, System.Text.ASCIIEncoding.ASCII)
-        Dim chunk As String = f.ReadToEnd()
-        f.Close()
+        'Dim arq As String = "c:\Users\washj\desktop\teste10.txt"
+        'Dim f As New IO.StreamReader(arq, System.Text.ASCIIEncoding.ASCII)
+        'Dim chunk As String = f.ReadToEnd()
+        'f.Close()
 
-        Dim dados As String = chunk.Split("{").Last()
+        'Dim dados As String = chunk.Split("{").Last()
 
-        dados = dados.Split("}"c).First()
-        Stop
-        Dim linhas() As String = dados.Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
-        Stop
+        'dados = dados.Split("}"c).First()
+        'Stop
+        'Dim linhas() As String = dados.Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
+        'Stop
 
-        Dim posX = 0
-        Dim posY = 0
+        'Dim posX = 0
+        'Dim posY = 0
 
-        For Each linha As String In linhas
-            Dim valores() As String = linha.Split(New String() {","}, StringSplitOptions.RemoveEmptyEntries)
+        'For Each linha As String In linhas
+        '    Dim valores() As String = linha.Split(New String() {","}, StringSplitOptions.RemoveEmptyEntries)
 
-            For Each valor As String In valores
-                Dim iValor As Integer = Convert.ToInt32(valor.Trim().Replace("0x", ""), 16)
+        '    For Each valor As String In valores
+        '        Dim iValor As Integer = Convert.ToInt32(valor.Trim().Replace("0x", ""), 16)
 
-                If iValor <> 0 Then
-                    Stop
-                    EnviarDados("#" & posX.ToString().Trim())
-                    'System.Threading.Thread.Sleep(50)
-                    EnviarDados("#" & posY.ToString().Trim())
-                    'System.Threading.Thread.Sleep(50)
-                    EnviarDados("#" & iValor.ToString().Trim())
-                    'System.Threading.Thread.Sleep(50)
-                End If
+        '        If iValor <> 0 Then
+        '            Stop
+        '            EnviarDados("#" & posX.ToString().Trim())
+        '            'System.Threading.Thread.Sleep(50)
+        '            EnviarDados("#" & posY.ToString().Trim())
+        '            'System.Threading.Thread.Sleep(50)
+        '            EnviarDados("#" & iValor.ToString().Trim())
+        '            'System.Threading.Thread.Sleep(50)
+        '        End If
 
-                posX += 7
-            Next
-            posY += 1
-            posX = 0
-        Next
+        '        posX += 7
+        '    Next
+        '    posY += 1
+        '    posX = 0
+        'Next
 
         'Dim arq As String = "c:\Users\washj\desktop\smart.bmp"
         'Dim f As New IO.StreamReader(arq, System.Text.ASCIIEncoding.ASCII)

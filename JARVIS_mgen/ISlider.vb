@@ -11,4 +11,5 @@
     Property Selected As CheckState
     Property ServoID As String
     Property Value As Integer
+    Property Name As String
 End Interface

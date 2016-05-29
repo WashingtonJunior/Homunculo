@@ -8,6 +8,7 @@ Public Class SliderVertical
     Public Event MaxPulseChanged(sender As Object, e As EventArgs) Implements ISlider.MaxPulseChanged
     Public Event MinPulseChanged(sender As Object, e As EventArgs) Implements ISlider.MinPulseChanged
     Public Property PreviousValue As Integer Implements ISlider.PreviousValue
+    Public Property Name As String Implements ISlider.Name
 
     Public Property Inverse As Boolean Implements ISlider.Inverse
         Get
@@ -98,7 +99,8 @@ Public Class SliderVertical
         End Get
         Set(value As Integer)
             If Inverse Then
-                BarraDeslizante.Value = BarraDeslizante.Maximum - BarraDeslizante.Value + BarraDeslizante.Minimum
+                'BarraDeslizante.Value = BarraDeslizante.Maximum - BarraDeslizante.Value + BarraDeslizante.Minimum
+                BarraDeslizante.Value = BarraDeslizante.Maximum - value + BarraDeslizante.Minimum
             Else
                 BarraDeslizante.Value = value
             End If

@@ -8,6 +8,7 @@ Public Class Slider
     Public Event MaxPulseChanged(sender As Object, e As EventArgs) Implements ISlider.MaxPulseChanged
     Public Event MinPulseChanged(sender As Object, e As EventArgs) Implements ISlider.MinPulseChanged
     Public Property PreviousValue As Integer Implements ISlider.PreviousValue
+    Public Property Name As String Implements ISlider.Name
 
     Public Property Inverse As Boolean Implements ISlider.Inverse
         Get

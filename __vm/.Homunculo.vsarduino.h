@@ -12,7 +12,7 @@
 #define _VSARDUINO_H_
 #define printf iprintf
 #define F_CPU 84000000L
-#define ARDUINO 10605
+#define ARDUINO 10609
 #define ARDUINO_MTK_ONE
 #define ARDUINO_ARCH_ARM
 #define __COMPILER_GCC__
@@ -21,7 +21,7 @@
 #define USB_VID 0x0E8D
 #define USB_PID 0x0023
 #define USBCON
-#define __cplusplus
+#define __cplusplus 201103L
 #define GCC_VERSION 40803
 #define __inline__
 #define __asm__(x)
@@ -106,5 +106,28 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portOutputRegister(P)
 #define portInputRegister(P)
 #define portModeRegister(P)
-#include <..\Homunculo\JARVIS.ino>
+
+//
+//
+short getValue(char *data);
+int getExtraValue(char *data);
+int playServo(char *data);
+int playServos(char data[16][16]);
+int moveServo(int servonum, int pos, int velocidade);
+void moveServos(short servonums[], short poss[], short velocidade);
+int offServo(short servonum);
+void printWifiStatus();
+int getFeedback(int pino);
+int split(char* data, const char* separador, char retorno[MAXQTTOKEN][MAXTOKEN]);
+int getDistanceinCM();
+int sendData(char data[MAXTOKEN], int qt);
+void printDirectory(LFile dir, int numTabs);
+int readImgFile(const char *arq);
+void showImg();
+void showIP();
+void showBattery();
+int readSeqFile(const char *arq);
+void listPrint();
+
+#include <JARVIS.ino>
 #endif
