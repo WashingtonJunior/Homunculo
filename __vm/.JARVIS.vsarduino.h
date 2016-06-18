@@ -12,7 +12,7 @@
 #define _VSARDUINO_H_
 #define printf iprintf
 #define F_CPU 84000000L
-#define ARDUINO 10605
+#define ARDUINO 10609
 #define ARDUINO_MTK_ONE
 #define ARDUINO_ARCH_ARM
 #define __COMPILER_GCC__
@@ -21,7 +21,7 @@
 #define USB_VID 0x0E8D
 #define USB_PID 0x0023
 #define USBCON
-#define __cplusplus
+#define __cplusplus 201103L
 #define GCC_VERSION 40803
 #define __inline__
 #define __asm__(x)
@@ -90,21 +90,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <arduino.h>
 #include <pins_arduino.h> 
 #include <variant.h> 
-#undef F
-#define F(string_literal) ((const PROGMEM char *)(string_literal))
-#undef PSTR
-#define PSTR(string_literal) ((const PROGMEM char *)(string_literal))
 #undef cli
 #define cli()
-#define pgm_read_byte(address_short)
-#define pgm_read_word(address_short)
-#define pgm_read_word2(address_short)
-#define digitalPinToPort(P)
-#define digitalPinToBitMask(P) 
-#define digitalPinToTimer(P)
-#define analogInPinToBit(P)
-#define portOutputRegister(P)
-#define portInputRegister(P)
-#define portModeRegister(P)
-#include <..\JARVIS\JARVIS.ino>
+#include <JARVIS.ino>
 #endif

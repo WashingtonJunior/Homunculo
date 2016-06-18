@@ -10,6 +10,7 @@
 
 #ifndef _VSARDUINO_H_
 #define _VSARDUINO_H_
+#define _VMDEBUG 1
 #define printf iprintf
 #define F_CPU 84000000L
 #define ARDUINO 10609
@@ -90,44 +91,7 @@ extern "C" void __cxa_pure_virtual() {;}
 #include <arduino.h>
 #include <pins_arduino.h> 
 #include <variant.h> 
-#undef F
-#define F(string_literal) ((const PROGMEM char *)(string_literal))
-#undef PSTR
-#define PSTR(string_literal) ((const PROGMEM char *)(string_literal))
 #undef cli
 #define cli()
-#define pgm_read_byte(address_short)
-#define pgm_read_word(address_short)
-#define pgm_read_word2(address_short)
-#define digitalPinToPort(P)
-#define digitalPinToBitMask(P) 
-#define digitalPinToTimer(P)
-#define analogInPinToBit(P)
-#define portOutputRegister(P)
-#define portInputRegister(P)
-#define portModeRegister(P)
-
-//
-//
-short getValue(char *data);
-int getExtraValue(char *data);
-int playServo(char *data);
-int playServos(char data[16][16]);
-int moveServo(int servonum, int pos, int velocidade);
-void moveServos(short servonums[], short poss[], short velocidade);
-int offServo(short servonum);
-void printWifiStatus();
-int getFeedback(int pino);
-int split(char* data, const char* separador, char retorno[MAXQTTOKEN][MAXTOKEN]);
-int getDistanceinCM();
-int sendData(char data[MAXTOKEN], int qt);
-void printDirectory(LFile dir, int numTabs);
-int readImgFile(const char *arq);
-void showImg();
-void showIP();
-void showBattery();
-int readSeqFile(const char *arq);
-void listPrint();
-
 #include <JARVIS.ino>
 #endif

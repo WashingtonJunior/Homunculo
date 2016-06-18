@@ -8788,7 +8788,7 @@ OUTPUT(C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_l
  .debug_ranges  0x00004368       0x28 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(itoa.c.o)
  .debug_ranges  0x00004390       0x10 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(dtostrf.c.o)
 
-.debug_line     0x00000000     0xe243
+.debug_line     0x00000000     0xe267
  .debug_line    0x00000000      0x2ff C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(syscalls_mtk.c.o)
  .debug_line    0x000002ff      0x360 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(main.cpp.o)
  .debug_line    0x0000065f      0x496 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(variant.cpp.o)
@@ -8797,41 +8797,41 @@ OUTPUT(C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_l
  .debug_line    0x00000fe8      0x4fb C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(UARTClass.cpp.o)
  .debug_line    0x000014e3       0x9a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(cxxabi-compat.cpp.o)
  .debug_line    0x0000157d      0x6af C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(Print.cpp.o)
- .debug_line    0x00001c2c     0x1400 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\JARVIS.cpp.o
- .debug_line    0x0000302c      0x45b C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp.o
- .debug_line    0x00003487      0x433 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\LAudio.cpp.o
- .debug_line    0x000038ba      0x453 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\utility\Audio.cpp.o
- .debug_line    0x00003d0d      0x357 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\LBattery.cpp.o
- .debug_line    0x00004064      0x318 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\utility\Battery.cpp.o
- .debug_line    0x0000437c      0x22d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBT.cpp.o
- .debug_line    0x000045a9      0x6ae C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTClient.cpp.o
- .debug_line    0x00004c57      0x6c9 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTServer.cpp.o
- .debug_line    0x00005320      0x7a2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTClient.cpp.o
- .debug_line    0x00005ac2      0x6cf C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTServer.cpp.o
- .debug_line    0x00006191      0x3c9 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LFlash.cpp.o
- .debug_line    0x0000655a      0x3de C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LSD.cpp.o
- .debug_line    0x00006938      0xa0c C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LStorage.cpp.o
- .debug_line    0x00007344      0x917 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFi.cpp.o
- .debug_line    0x00007c5b      0x425 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiClient.cpp.o
- .debug_line    0x00008080      0x68e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiServer.cpp.o
- .debug_line    0x0000870e      0x70d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiUdp.cpp.o
- .debug_line    0x00008e1b      0x6b9 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\OzOLED\OzOLED.cpp.o
- .debug_line    0x000094d4      0x744 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Wire\Wire.cpp.o
- .debug_line    0x00009c18      0x438 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_analog.c.o)
- .debug_line    0x0000a050      0x333 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_digital.c.o)
- .debug_line    0x0000a383      0x3c3 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(IPAddress.cpp.o)
- .debug_line    0x0000a746      0x378 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTask.cpp.o)
- .debug_line    0x0000aabe      0x89f C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpClient.cpp.o)
- .debug_line    0x0000b35d      0xa95 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpServer.cpp.o)
- .debug_line    0x0000bdf2      0xd37 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LUdp.cpp.o)
- .debug_line    0x0000cb29      0x500 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(Stream.cpp.o)
- .debug_line    0x0000d029      0x25b C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_pulse.cpp.o)
- .debug_line    0x0000d284      0x215 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WMath.cpp.o)
- .debug_line    0x0000d499      0xb66 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WString.cpp.o)
- .debug_line    0x0000dfff      0x12a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(itoa.c.o)
- .debug_line    0x0000e129      0x11a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(dtostrf.c.o)
+ .debug_line    0x00001c2c     0x1412 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\JARVIS.cpp.o
+ .debug_line    0x0000303e      0x464 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp.o
+ .debug_line    0x000034a2      0x433 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\LAudio.cpp.o
+ .debug_line    0x000038d5      0x453 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\utility\Audio.cpp.o
+ .debug_line    0x00003d28      0x357 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\LBattery.cpp.o
+ .debug_line    0x0000407f      0x318 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\utility\Battery.cpp.o
+ .debug_line    0x00004397      0x22d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBT.cpp.o
+ .debug_line    0x000045c4      0x6ae C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTClient.cpp.o
+ .debug_line    0x00004c72      0x6c9 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTServer.cpp.o
+ .debug_line    0x0000533b      0x7a2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTClient.cpp.o
+ .debug_line    0x00005add      0x6cf C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTServer.cpp.o
+ .debug_line    0x000061ac      0x3c9 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LFlash.cpp.o
+ .debug_line    0x00006575      0x3de C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LSD.cpp.o
+ .debug_line    0x00006953      0xa0c C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LStorage.cpp.o
+ .debug_line    0x0000735f      0x917 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFi.cpp.o
+ .debug_line    0x00007c76      0x425 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiClient.cpp.o
+ .debug_line    0x0000809b      0x68e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiServer.cpp.o
+ .debug_line    0x00008729      0x70d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiUdp.cpp.o
+ .debug_line    0x00008e36      0x6c2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\OzOLED\OzOLED.cpp.o
+ .debug_line    0x000094f8      0x744 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Wire\Wire.cpp.o
+ .debug_line    0x00009c3c      0x438 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_analog.c.o)
+ .debug_line    0x0000a074      0x333 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_digital.c.o)
+ .debug_line    0x0000a3a7      0x3c3 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(IPAddress.cpp.o)
+ .debug_line    0x0000a76a      0x378 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTask.cpp.o)
+ .debug_line    0x0000aae2      0x89f C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpClient.cpp.o)
+ .debug_line    0x0000b381      0xa95 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpServer.cpp.o)
+ .debug_line    0x0000be16      0xd37 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LUdp.cpp.o)
+ .debug_line    0x0000cb4d      0x500 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(Stream.cpp.o)
+ .debug_line    0x0000d04d      0x25b C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_pulse.cpp.o)
+ .debug_line    0x0000d2a8      0x215 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WMath.cpp.o)
+ .debug_line    0x0000d4bd      0xb66 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WString.cpp.o)
+ .debug_line    0x0000e023      0x12a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(itoa.c.o)
+ .debug_line    0x0000e14d      0x11a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(dtostrf.c.o)
 
-.debug_str      0x00000000     0xd4d5
+.debug_str      0x00000000     0xd4e7
  .debug_str     0x00000000      0x3d4 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(syscalls_mtk.c.o)
                                 0x49f (size before relaxing)
  .debug_str     0x000003d4      0x418 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(main.cpp.o)
@@ -8850,69 +8850,69 @@ OUTPUT(C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_l
                                 0xf0d (size before relaxing)
  .debug_str     0x000027a2     0x2beb C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\JARVIS.cpp.o
                                0x401b (size before relaxing)
- .debug_str     0x0000538d      0x1a2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp.o
-                                0x545 (size before relaxing)
- .debug_str     0x0000552f       0x9f C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\LAudio.cpp.o
+ .debug_str     0x0000538d      0x1ab C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp.o
+                                0x54e (size before relaxing)
+ .debug_str     0x00005538       0x9f C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\LAudio.cpp.o
                                 0x77f (size before relaxing)
- .debug_str     0x000055ce      0x1b2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\utility\Audio.cpp.o
+ .debug_str     0x000055d7      0x1b2 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LAudio\utility\Audio.cpp.o
                                 0x8db (size before relaxing)
- .debug_str     0x00005780       0x87 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\LBattery.cpp.o
+ .debug_str     0x00005789       0x87 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\LBattery.cpp.o
                                 0x52f (size before relaxing)
- .debug_str     0x00005807       0xb0 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\utility\Battery.cpp.o
+ .debug_str     0x00005810       0xb0 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBattery\utility\Battery.cpp.o
                                 0x2ca (size before relaxing)
- .debug_str     0x000058b7       0x99 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBT.cpp.o
+ .debug_str     0x000058c0       0x99 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBT.cpp.o
                                 0x2ca (size before relaxing)
- .debug_str     0x00005950      0x4a8 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTClient.cpp.o
+ .debug_str     0x00005959      0x4a8 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTClient.cpp.o
                                0x15e8 (size before relaxing)
- .debug_str     0x00005df8      0x25d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTServer.cpp.o
+ .debug_str     0x00005e01      0x25d C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\LBTServer.cpp.o
                                0x15a3 (size before relaxing)
- .debug_str     0x00006055     0x1072 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTClient.cpp.o
+ .debug_str     0x0000605e     0x1072 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTClient.cpp.o
                                0x1933 (size before relaxing)
- .debug_str     0x000070c7      0x3ae C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTServer.cpp.o
+ .debug_str     0x000070d0      0x3ae C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LBT\utility\BTServer.cpp.o
                                0x176c (size before relaxing)
- .debug_str     0x00007475       0xdc C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LFlash.cpp.o
+ .debug_str     0x0000747e       0xdc C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LFlash.cpp.o
                                 0x6a8 (size before relaxing)
- .debug_str     0x00007551       0xbe C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LSD.cpp.o
+ .debug_str     0x0000755a       0xbe C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LSD.cpp.o
                                 0x729 (size before relaxing)
- .debug_str     0x0000760f      0x626 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LStorage.cpp.o
+ .debug_str     0x00007618      0x626 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LStorage\LStorage.cpp.o
                                0x1961 (size before relaxing)
- .debug_str     0x00007c35     0x1212 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFi.cpp.o
+ .debug_str     0x00007c3e     0x1212 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFi.cpp.o
                                0x2bf4 (size before relaxing)
- .debug_str     0x00008e47      0x10e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiClient.cpp.o
+ .debug_str     0x00008e50      0x10e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiClient.cpp.o
                                 0x3a5 (size before relaxing)
- .debug_str     0x00008f55       0xfd C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiServer.cpp.o
+ .debug_str     0x00008f5e       0xfd C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiServer.cpp.o
                                 0x47b (size before relaxing)
- .debug_str     0x00009052      0x177 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiUdp.cpp.o
+ .debug_str     0x0000905b      0x177 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\LWiFi\LWiFiUdp.cpp.o
                                0x1763 (size before relaxing)
- .debug_str     0x000091c9      0x115 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\OzOLED\OzOLED.cpp.o
-                                0x7de (size before relaxing)
- .debug_str     0x000092de      0x751 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Wire\Wire.cpp.o
+ .debug_str     0x000091d2      0x11e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\OzOLED\OzOLED.cpp.o
+                                0x7e7 (size before relaxing)
+ .debug_str     0x000092f0      0x751 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one\Wire\Wire.cpp.o
                                0x18bc (size before relaxing)
- .debug_str     0x00009a2f      0x68a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_analog.c.o)
+ .debug_str     0x00009a41      0x68a C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_analog.c.o)
                                 0xa9e (size before relaxing)
- .debug_str     0x0000a0b9       0xd6 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_digital.c.o)
+ .debug_str     0x0000a0cb       0xd6 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_digital.c.o)
                                 0x80f (size before relaxing)
- .debug_str     0x0000a18f      0x1ca C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(IPAddress.cpp.o)
+ .debug_str     0x0000a1a1      0x1ca C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(IPAddress.cpp.o)
                                 0x54b (size before relaxing)
- .debug_str     0x0000a359       0xc5 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTask.cpp.o)
+ .debug_str     0x0000a36b       0xc5 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTask.cpp.o)
                                 0x58f (size before relaxing)
- .debug_str     0x0000a41e      0x540 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpClient.cpp.o)
+ .debug_str     0x0000a430      0x540 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpClient.cpp.o)
                                0x183c (size before relaxing)
- .debug_str     0x0000a95e      0xaec C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpServer.cpp.o)
+ .debug_str     0x0000a970      0xaec C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LTcpServer.cpp.o)
                                0x20f8 (size before relaxing)
- .debug_str     0x0000b44a     0x1a14 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LUdp.cpp.o)
+ .debug_str     0x0000b45c     0x1a14 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(LUdp.cpp.o)
                                0x329e (size before relaxing)
- .debug_str     0x0000ce5e       0xba C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(Stream.cpp.o)
+ .debug_str     0x0000ce70       0xba C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(Stream.cpp.o)
                                 0xecb (size before relaxing)
- .debug_str     0x0000cf18       0x91 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_pulse.cpp.o)
+ .debug_str     0x0000cf2a       0x91 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(wiring_pulse.cpp.o)
                                 0x2ad (size before relaxing)
- .debug_str     0x0000cfa9       0xdc C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WMath.cpp.o)
+ .debug_str     0x0000cfbb       0xdc C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WMath.cpp.o)
                                 0x2d1 (size before relaxing)
- .debug_str     0x0000d085      0x37e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WString.cpp.o)
+ .debug_str     0x0000d097      0x37e C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(WString.cpp.o)
                                 0xe4b (size before relaxing)
- .debug_str     0x0000d403       0x66 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(itoa.c.o)
+ .debug_str     0x0000d415       0x66 C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(itoa.c.o)
                                 0x1de (size before relaxing)
- .debug_str     0x0000d469       0x6c C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(dtostrf.c.o)
+ .debug_str     0x0000d47b       0x6c C:\Users\washj\AppData\Local\Temp\VMicroBuilds\JARVIS\LinkIt_linkit_arm_linkit_one/core.a(dtostrf.c.o)
                                 0x1fe (size before relaxing)
 
 .debug_frame    0x00000000     0x7bb4
