@@ -38,7 +38,7 @@ item *listInsert(char *s, item *it);
 unsigned char img[IMGSIZE];
 unsigned char seq[1024];
 
-const char ssid[] = "J.A.R.V.I.S.";  //  your network SSID (name)
+const char ssid[] = "Warlock";  //  your network SSID (name)
 const char pass[] = "bc25fcb38b";    // your network password
 
 const char folder[] = "/jarvis/";
@@ -179,7 +179,7 @@ void setup() {
   memset(toExecute, 0, MAXDATA);
   toExecute[0] = '\0';
 
-  strcat(toExecute, "#blink.img|^init.seq|BT|");
+  strcat(toExecute, "#sblink.img|^init.seq|BT|#smile.img|");
 
 
   Serial.println("J.A.R.V.I.S. Loaded!");
@@ -1570,7 +1570,7 @@ int readSeqFileStr(char *arq, char retorno[MAXDATA])
 */
 
 /*
-//Só funciona com MAXDATA, MAXTOKENS e MAXQTTOKENS todos iguais a 640
+//Sï¿½ funciona com MAXDATA, MAXTOKENS e MAXQTTOKENS todos iguais a 640
 int readSeqFileX(const char *arq, char retorno[MAXDATA], bool deep)
 {
 	Serial.println("readSeqFileX");

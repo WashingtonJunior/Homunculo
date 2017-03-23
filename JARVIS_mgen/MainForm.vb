@@ -172,7 +172,7 @@ Public Class MainForm
         Enviar("OFF")
     End Sub
 
-    Private Sub Servo_Scroll(sender As Object, e As EventArgs) Handles Servo1.Scroll, Servo2.Scroll, Servo3.Scroll, Servo4.Scroll, Servo5.Scroll, Servo6.Scroll, Servo7.Scroll, Servo8.Scroll, Servo11.Scroll, Servo12.Scroll, Servo13.Scroll, Servo14.Scroll, Servo15.Scroll, Servo16.Scroll
+    Private Sub Servo_Scroll(sender As Object, e As EventArgs) Handles Servo1.Scroll, Servo2.Scroll, Servo3.Scroll, Servo4.Scroll, Servo5.Scroll, Servo6.Scroll, Servo7.Scroll, Servo8.Scroll, Servo9.Scroll, Servo10.Scroll, Servo16.Scroll, Servo13.Scroll, Servo15.Scroll, Servo12.Scroll, Servo11.Scroll, Servo14.Scroll
         'If serial IsNot Nothing AndAlso serial.IsOpen() Then
         'Stop
         Dim cmd As String = sender.ServoID & sender.Value.ToString()
@@ -214,8 +214,20 @@ Public Class MainForm
         'End If
     End Sub
 
-    Private Sub Servo_ButtonClick(sender As Object, e As EventArgs) Handles Servo1.ButtonClick, Servo2.ButtonClick, Servo3.ButtonClick, Servo4.ButtonClick, Servo5.ButtonClick, Servo6.ButtonClick, Servo7.ButtonClick, Servo8.ButtonClick, Servo11.ButtonClick, Servo12.ButtonClick, Servo13.ButtonClick, Servo14.ButtonClick, Servo15.ButtonClick, Servo16.ButtonClick
-        lbPosições.Items.Add(sender.ServoID & sender.Value.ToString())
+    Private Sub Servo_ButtonClick(sender As Object, e As EventArgs) Handles Servo1.ButtonClick, Servo2.ButtonClick, Servo3.ButtonClick, Servo4.ButtonClick, Servo5.ButtonClick, Servo6.ButtonClick, Servo7.ButtonClick, Servo8.ButtonClick, Servo9.ButtonClick, Servo16.ButtonClick, Servo13.ButtonClick, Servo15.ButtonClick, Servo12.ButtonClick, Servo11.ButtonClick, Servo14.ButtonClick, Servo10.ButtonClick
+        If lbPosições.SelectedIndex > -1 AndAlso (ModifierKeys AndAlso Keys.Shift = Keys.Shift) Then
+            Dim sel As String = lbPosições.SelectedItem
+            'Stop
+            If Not sel.StartsWith("*") Then
+                sel = "*" & sel
+            End If
+            sel &= ";" & sender.ServoID & sender.Value.ToString()
+
+            lbPosições.Items(lbPosições.SelectedIndex) = sel
+            'lbPosições.SelectedItem = sel
+        Else
+            lbPosições.Items.Add(sender.ServoID & sender.Value.ToString())
+        End If
     End Sub
 
     Private Sub btnRegistrar_Click(sender As Object, e As EventArgs) Handles btnRegistrar.Click
@@ -317,9 +329,9 @@ Public Class MainForm
             If lbPosições.SelectedIndex >= 0 Then
                 lbPosições.Items.RemoveAt(lbPosições.SelectedIndex)
             End If
-        ElseIf e.KeyCode = Keys.F5
+        ElseIf e.KeyCode = Keys.F5 Then
             btnExecutarPosições.PerformClick()
-        ElseIf e.KeyCode = Keys.F8
+        ElseIf e.KeyCode = Keys.F8 Then
             Dim idx As Integer = lbPosições.SelectedIndex
             Dim pos As String = lbPosições.Items(idx)
 
@@ -444,7 +456,7 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub Servo_MaxPulseChanged(sender As Object, e As EventArgs) Handles Servo1.MaxPulseChanged, Servo2.MaxPulseChanged, Servo3.MaxPulseChanged, Servo4.MaxPulseChanged, Servo5.MaxPulseChanged, Servo6.MaxPulseChanged, Servo7.MaxPulseChanged, Servo8.MaxPulseChanged, Servo11.MaxPulseChanged, Servo12.MaxPulseChanged, Servo13.MaxPulseChanged, Servo14.MaxPulseChanged, Servo15.MaxPulseChanged, Servo16.MaxPulseChanged
+    Private Sub Servo_MaxPulseChanged(sender As Object, e As EventArgs) Handles Servo1.MaxPulseChanged, Servo2.MaxPulseChanged, Servo3.MaxPulseChanged, Servo4.MaxPulseChanged, Servo5.MaxPulseChanged, Servo6.MaxPulseChanged, Servo7.MaxPulseChanged, Servo8.MaxPulseChanged, Servo9.MaxPulseChanged, Servo10.MaxPulseChanged, Servo16.MaxPulseChanged, Servo15.MaxPulseChanged, Servo12.MaxPulseChanged, Servo11.MaxPulseChanged, Servo14.MaxPulseChanged, Servo13.MaxPulseChanged
         Dim sl As ISlider = sender
         Dim cmd As String = ")" & sl.ServoID & ":" & sl.MaxPulse.ToString()
 
@@ -452,7 +464,7 @@ Public Class MainForm
         Debug.Print(cmd)
     End Sub
 
-    Private Sub Servo_MinPulseChanged(sender As Object, e As EventArgs) Handles Servo1.MinPulseChanged, Servo2.MinPulseChanged, Servo3.MinPulseChanged, Servo4.MinPulseChanged, Servo5.MinPulseChanged, Servo6.MinPulseChanged, Servo7.MinPulseChanged, Servo8.MinPulseChanged, Servo11.MinPulseChanged, Servo12.MinPulseChanged, Servo13.MinPulseChanged, Servo14.MinPulseChanged, Servo15.MinPulseChanged, Servo16.MinPulseChanged
+    Private Sub Servo_MinPulseChanged(sender As Object, e As EventArgs) Handles Servo1.MinPulseChanged, Servo2.MinPulseChanged, Servo3.MinPulseChanged, Servo4.MinPulseChanged, Servo5.MinPulseChanged, Servo6.MinPulseChanged, Servo7.MinPulseChanged, Servo8.MinPulseChanged, Servo9.MinPulseChanged, Servo10.MinPulseChanged, Servo16.MinPulseChanged, Servo15.MinPulseChanged, Servo12.MinPulseChanged, Servo11.MinPulseChanged, Servo14.MinPulseChanged, Servo13.MinPulseChanged
         Dim sl As ISlider = sender
         Dim cmd As String = "(" & sl.ServoID & ":" & sl.MinPulse.ToString()
 
@@ -461,6 +473,7 @@ Public Class MainForm
     End Sub
 
     Private Sub btnInicializar_Click(sender As Object, e As EventArgs) Handles btnInicializar.Click
+
         'udp = New System.Net.Sockets.UdpClient(txtEndereço.Text, Integer.Parse(txtPorta.Text))
         If tcp Is Nothing OrElse Not tcp.Connected Then
             Try
@@ -479,51 +492,77 @@ Public Class MainForm
         End If
 
         If tcp IsNot Nothing AndAlso tcp.Connected Then
-            For Each c As Control In Me.Controls
-                If TypeOf c Is ISlider Then
-                    Dim sl As ISlider = c
+            Dim init() As String = CarregarPosições("init.seq")
 
-                    sl.MinPulse = 153
-                    sl.MaxPulse = 590
+            For Each pos As String In init
+                If pos.Contains("(") OrElse pos.Contains(")") Then
+                    Dim minmax As String = pos.Substring(0, 1)
+                    Dim idServo As String = pos.Substring(1, 1)
+                    Dim valor As String = pos.Substring(3)
+
+                    For Each c As Control In Me.Controls
+                        If TypeOf c Is ISlider Then
+                            Dim sl As ISlider = c
+
+                            If sl.ServoID = idServo Then
+                                If minmax = "(" Then
+                                    sl.MinPulse = valor
+                                Else
+                                    sl.MaxPulse = valor
+                                End If
+                                Exit For
+                            End If
+                        End If
+                    Next
                 End If
             Next
 
-            'Servo1.MinPulse = 158
-            'Servo1.MaxPulse = 430
 
-            'Servo3.MinPulse = 153
-            'Servo3.MaxPulse = 630
+            'For Each c As Control In Me.Controls
+            '    If TypeOf c Is ISlider Then
+            '        Dim sl As ISlider = c
 
-            Servo4.MinPulse = 143
-            Servo4.MaxPulse = 500
+            '        sl.MinPulse = 153
+            '        sl.MaxPulse = 590
+            '    End If
+            'Next
 
-            'Servo5.MinPulse = 261
-            'Servo5.MaxPulse = 530
+            ''Servo1.MinPulse = 158
+            ''Servo1.MaxPulse = 430
 
-            'Servo7.MinPulse = 142
-            'Servo7.MaxPulse = 578
+            ''Servo3.MinPulse = 153
+            ''Servo3.MaxPulse = 630
 
-            Servo8.MinPulse = 143
-            Servo8.MaxPulse = 500
+            'Servo4.MinPulse = 143
+            'Servo4.MaxPulse = 500
 
-            'Servo9.MinPulse = 150
-            'Servo9.MaxPulse = 590
+            ''Servo5.MinPulse = 261
+            ''Servo5.MaxPulse = 530
 
-            'Servo10.MinPulse = 147
-            'Servo10.MaxPulse = 583
+            ''Servo7.MinPulse = 142
+            ''Servo7.MaxPulse = 578
 
-            Servo13.MaxPulse = 535
-            Servo15.MaxPulse = 535
+            'Servo8.MinPulse = 143
+            'Servo8.MaxPulse = 500
 
-            Servo14.MinPulse = 171
-            Servo14.MaxPulse = 545
+            ''Servo9.MinPulse = 150
+            ''Servo9.MaxPulse = 590
 
-            Servo16.MinPulse = 147
-            Servo16.MaxPulse = 590
+            ''Servo10.MinPulse = 147
+            ''Servo10.MaxPulse = 583
+
+            'Servo13.MaxPulse = 535
+            'Servo15.MaxPulse = 535
+
+            'Servo14.MinPulse = 171
+            'Servo14.MaxPulse = 545
+
+            'Servo16.MinPulse = 147
+            'Servo16.MaxPulse = 590
         End If
     End Sub
 
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub Button1_Click(sender As Object, e As EventArgs)
         Dim inicial As String = "inicial.seq"
         Dim andar As String = "andar.seq"
         Dim virardir As String = "virardir.seq"
@@ -596,233 +635,4 @@ Public Class MainForm
         Enviar("RESET")
     End Sub
 
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        'Dim arq As String = "c:\Users\washj\desktop\teste10.txt"
-        'Dim f As New IO.StreamReader(arq, System.Text.ASCIIEncoding.ASCII)
-        'Dim chunk As String = f.ReadToEnd()
-        'f.Close()
-
-        'Dim dados As String = chunk.Split("{").Last()
-
-        'dados = dados.Split("}"c).First()
-        'Stop
-        'Dim linhas() As String = dados.Split(New String() {vbCrLf}, StringSplitOptions.RemoveEmptyEntries)
-        'Stop
-
-        'Dim posX = 0
-        'Dim posY = 0
-
-        'For Each linha As String In linhas
-        '    Dim valores() As String = linha.Split(New String() {","}, StringSplitOptions.RemoveEmptyEntries)
-
-        '    For Each valor As String In valores
-        '        Dim iValor As Integer = Convert.ToInt32(valor.Trim().Replace("0x", ""), 16)
-
-        '        If iValor <> 0 Then
-        '            Stop
-        '            EnviarDados("#" & posX.ToString().Trim())
-        '            'System.Threading.Thread.Sleep(50)
-        '            EnviarDados("#" & posY.ToString().Trim())
-        '            'System.Threading.Thread.Sleep(50)
-        '            EnviarDados("#" & iValor.ToString().Trim())
-        '            'System.Threading.Thread.Sleep(50)
-        '        End If
-
-        '        posX += 7
-        '    Next
-        '    posY += 1
-        '    posX = 0
-        'Next
-
-        'Dim arq As String = "c:\Users\washj\desktop\smart.bmp"
-        'Dim f As New IO.StreamReader(arq, System.Text.ASCIIEncoding.ASCII)
-
-        'Dim bytes() As Byte = System.Text.ASCIIEncoding.ASCII.GetBytes(f.ReadToEnd())
-        'Dim Lbytes As New List(Of Byte)(bytes)
-        'Lbytes.RemoveRange(0, 4)
-
-        'f.Close()
-        'Dim posx As Integer = 0
-        'Dim posy As Integer = 0
-
-        'For Each b As Byte In Lbytes
-        '    If b <> 0 Then
-        '        EnviarDados("#" & posx & "|")
-        '        EnviarDados("#" & posy & "|")
-        '        EnviarDados("#" & b & "|")
-        '    End If
-
-        '    posx += 1
-
-        '    If posx = 128 Then
-        '        posx = 0
-        '        posy = +1
-        '    End If
-        'Next
-    End Sub
-
-    Private Sub pbHead_DoubleClick(sender As Object, e As EventArgs) Handles pbHead.DoubleClick
-        Dim selArq As New OpenFileDialog()
-
-        selArq.Filter = "Imagens|*.bmp;*.png;*.jpg;*.gif"
-
-        If selArq.ShowDialog() = DialogResult.OK Then
-            Dim arq As String = selArq.FileName
-            Dim bmp As New Bitmap(arq)
-            Dim xbmp As New Bitmap(bmp, 128, 64)
-
-            For x As Integer = 0 To xbmp.Width - 1
-                For y As Integer = 0 To xbmp.Height - 1
-                    Dim c As Color = xbmp.GetPixel(x, y)
-
-                    Dim rgb As Integer = (c.R * 0.299 + c.G * 0.587 + c.B * 0.114)
-                    Dim cor As Color = Color.White
-
-                    If rgb < 200 Then
-                        cor = Color.Black
-                    End If
-
-                    'xbmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb))
-                    xbmp.SetPixel(x, y, cor)
-                Next
-            Next
-
-            pbHead.Image = xbmp
-        End If
-    End Sub
-
-    Private Sub pbHead_MouseClick(sender As Object, e As MouseEventArgs) Handles pbHead.MouseClick
-        If e.Button = MouseButtons.Right Then
-            Enviar("#-1|")
-            Threading.Thread.Sleep(50)
-
-            Dim xbmp As Bitmap = pbHead.Image
-            Dim imgidx As Integer = 0
-            Dim sb As New System.Text.StringBuilder()
-
-            If xbmp IsNot Nothing Then
-                For y As Integer = 0 To xbmp.Height - 1
-                    For x As Integer = 0 To xbmp.Width - 1 Step 8
-                        Dim bits As New BitArray(8)
-
-                        For i As Integer = 0 To 7
-                            Dim c As Color = xbmp.GetPixel(x + i, y)
-
-                            If c.R = Color.Black.R AndAlso c.G = Color.Black.G AndAlso c.B = Color.Black.B Then
-                                bits(7 - i) = True
-                            End If
-                        Next
-
-                        Dim sbin As String = ""
-                        For i As Integer = 0 To 7
-                            sbin &= IIf(bits(i), "1", "0")
-                        Next
-
-                        Dim b(0) As Byte
-                        bits.CopyTo(b, 0)
-
-                        'Debug.Print(sbin & " = " & b(0).ToString())
-                        'Enviar("#" & b(0).ToString().Trim() & ":" & imgidx.ToString() & "|", True)
-                        sb.Append("#" & b(0).ToString().Trim() & ":" & imgidx.ToString() & "|")
-                        If sb.Length > 500 Then
-                            Enviar(sb.ToString(), True)
-
-                            sb = New System.Text.StringBuilder()
-                        End If
-                        'Stop
-                        imgidx += 1
-                        'Threading.Thread.Sleep(50)
-                    Next
-                Next
-                If sb.Length > 0 Then
-                    Enviar(sb.ToString(), True)
-                End If
-            End If
-
-            Threading.Thread.Sleep(50)
-            Enviar("#-2|")
-        End If
-
-        'If e.Button = MouseButtons.Right Then
-        '    EnviarDados("#-1:-1|")
-
-        '    Dim xbmp As Bitmap = pbHead.Image
-        '    'Dim qtenvio As Integer = 0
-        '    'Dim MAXqtenvio As Integer = 1
-
-        '    For x As Integer = 0 To xbmp.Width - 1
-        '        'Dim s As New System.Text.StringBuilder()
-
-        '        For y As Integer = 0 To xbmp.Height - 1
-        '            Dim c As Color = xbmp.GetPixel(x, y)
-
-        '            If c.R = Color.Black.R AndAlso c.G = Color.Black.G AndAlso c.B = Color.Black.B Then
-        '                Dim s As String = "#" & x.ToString().Trim() & ":" & y.ToString().Trim() & "|"
-        '                's.Append("#" & Chr(x) & Chr(y) & Chr(1) & "|")
-        '                's.Append("#" & x.ToString().Trim() & ":" & y.ToString().Trim() & "|")
-        '                'qtenvio += 1
-
-        '                'If qtenvio = MAXqtenvio Then
-        '                EnviarDados(s.ToString())
-        '                System.Threading.Thread.Sleep(60)
-        '                'qtenvio = 0
-        '                'End If
-
-        '                'EnviarDados("#" & Chr(x) & Chr(y) & Chr(200) & "|")
-        '                'System.Threading.Thread.Sleep(50)
-        '                'EnviarDados("#" & y.ToString().Trim() & "|")
-        '                'If y Mod 2 = 0 Then
-        '                'System.Threading.Thread.Sleep(50)
-        '                'End If
-        '                'EnviarDados("#200|")
-        '            End If
-        '        Next
-        '    Next
-        '    EnviarDados("#-2:-2|")
-
-        'End If
-    End Sub
-
-    Private Sub pbHead_Click(sender As Object, e As EventArgs) Handles pbHead.Click
-
-    End Sub
-
-    Private Sub btnConvertHexToBinary_Click(sender As Object, e As EventArgs) Handles btnConvertHexToBinary.Click
-        Dim o As New OpenFileDialog()
-
-        o.DefaultExt = ".txt"
-        o.Filter = "Text file|*.txt"
-
-        If o.ShowDialog() = DialogResult.OK Then
-            Dim f As New IO.StreamReader(o.FileName)
-            Dim chunk As String = f.ReadToEnd()
-
-            f.Close()
-
-            'Stop
-            Dim ini As Integer = chunk.IndexOf("{") + 1
-            Dim fim As Integer = chunk.IndexOf("}")
-            Dim vetor() As String = chunk.Substring(ini, fim - ini).Replace(vbCrLf, "").Replace(" ", "").Replace("0x", "").Split(",")
-            'Stop
-
-            Dim Lbuffer As New List(Of Char)()
-
-            For Each b As String In vetor
-                Dim i As Byte = Byte.Parse(b, Globalization.NumberStyles.HexNumber)
-
-                If i <> 0 Then
-                    'Stop
-                End If
-
-                Lbuffer.Add(Chr(i))
-            Next
-
-            Dim arqname As String = o.FileName.Replace(".txt", ".img")
-            Dim arq As New IO.StreamWriter(arqname, False, System.Text.Encoding.GetEncoding(1252))
-            arq.Write(Lbuffer.ToArray())
-            arq.Close()
-
-            MessageBox.Show("'" & arqname & "' gravado!")
-        End If
-    End Sub
 End Class

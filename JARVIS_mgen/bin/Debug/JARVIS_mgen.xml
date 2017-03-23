@@ -22,6 +22,11 @@ JARVIS_mgen
   resource lookups using this strongly typed resource class.
 </summary>
 </member>
+<member name="P:JARVIS_mgen.My.Resources.Resources.Bug">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
 <member name="P:JARVIS_mgen.My.Resources.Resources.Jarvis14">
 <summary>
   Looks up a localized resource of type System.Drawing.Bitmap.
